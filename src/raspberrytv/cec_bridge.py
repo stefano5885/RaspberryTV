@@ -6,8 +6,11 @@ import os
 import re
 import struct
 import subprocess
+import threading
 import time
 from pathlib import Path
+
+from .cec_power import TvPowerController, parse_tv_power
 
 
 LOGGER = logging.getLogger("raspberrytv.cec")
@@ -87,22 +90,62 @@ def dispatch(keyboard: VirtualKeyboard, key: str, helper: str = "/usr/local/sbin
         subprocess.run([helper, "browser-admin"], timeout=10, check=False)
 
 
-def run_client(keyboard: VirtualKeyboard) -> None:
+def run_client(
+    keyboard: VirtualKeyboard,
+    helper: str = "/usr/local/sbin/raspberrytv-control",
+) -> None:
     process = subprocess.Popen(
         ["cec-client", "-d", "8", "-t", "p", "-o", "RaspberryTV"],
-        stdin=subprocess.DEVNULL,
+        stdin=subprocess.PIPE,
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
         text=True,
         bufsize=1,
     )
+    assert process.stdin is not None
     assert process.stdout is not None
+    stop_queries = threading.Event()
+    write_lock = threading.Lock()
+
+    def send(command: str) -> None:
+        with write_lock:
+            process.stdin.write(command + "\n")
+            process.stdin.flush()
+
+    def tv_on() -> None:
+        subprocess.run([helper, "tv-on"], timeout=30, check=False)
+        try:
+            send("as")
+        except (BrokenPipeError, OSError):
+            pass
+
+    def tv_off() -> None:
+        subprocess.run([helper, "tv-off"], timeout=30, check=False)
+
+    power_controller = TvPowerController(turn_on=tv_on, turn_off=tv_off)
+
+    def query_power() -> None:
+        while not stop_queries.wait(2):
+            try:
+                send("pow 0")
+            except (BrokenPipeError, OSError):
+                return
+            if stop_queries.wait(13):
+                return
+
+    query_thread = threading.Thread(target=query_power, name="cec-power-query", daemon=True)
+    query_thread.start()
     for line in process.stdout:
+        powered_on = parse_tv_power(line)
+        if powered_on is not None:
+            LOGGER.info("Stato alimentazione TV: %s", "accesa" if powered_on else "spenta")
+            power_controller.observe(powered_on)
         match = KEY_LINE.search(line)
         if match:
             key = normalize_key(match.group(1))
             LOGGER.info("Tasto CEC: %s", key)
             dispatch(keyboard, key)
+    stop_queries.set()
     return_code = process.wait()
     raise RuntimeError(f"cec-client terminato con codice {return_code}")
 

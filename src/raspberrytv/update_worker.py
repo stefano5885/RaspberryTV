@@ -151,6 +151,23 @@ class ReleaseManager:
                 time.sleep(2)
         return False
 
+    def _reboot(self) -> None:
+        subprocess.run(["systemctl", "reboot"], timeout=10, check=False)
+
+    def _finish(self, status: str, message: str, tag: str = "", reboot: bool = True) -> None:
+        self.store.state_file.update(browser_target="site")
+        if reboot:
+            self._status("rebooting", f"{message}. Riavvio del sistema", tag=tag)
+            time.sleep(4)
+            self._reboot()
+        else:
+            self._status(status, message, tag=tag)
+            subprocess.run(
+                ["systemctl", "try-restart", "raspberrytv-kiosk.service"],
+                timeout=20,
+                check=False,
+            )
+
     def update(self, requested_tag: str = "") -> None:
         config = self.store.config_file.read()
         repository_url = str(config.get("repository_url", "")).strip()
@@ -167,6 +184,9 @@ class ReleaseManager:
             if requested is None or requested.tag not in self._tags():
                 raise ValueError("Tag richiesto non disponibile")
         release = self._release_for_tag(tag)
+        if self.current.exists() and self.current.resolve() == release:
+            self._finish("no_change", f"Release {tag} già installata", tag=tag, reboot=False)
+            return
         self._sync_system_files(release)
         previous = self._switch(release)
         self.release_state.write({
@@ -175,6 +195,7 @@ class ReleaseManager:
         })
         self._status("activating", f"Attivazione {tag}", tag=tag)
         self._restart()
+        self._status("verifying", f"Verifica della release {tag}", tag=tag)
         if not self._healthy(expected_version=tag):
             if previous and previous.is_dir():
                 self._sync_system_files(previous)
@@ -187,7 +208,7 @@ class ReleaseManager:
                     "previous_release": str(release),
                 })
             raise RuntimeError("Health check fallito; versione precedente ripristinata")
-        self._status("success", f"Release {tag} installata", tag=tag)
+        self._finish("success", f"Release {tag} installata", tag=tag)
 
     def rollback(self) -> None:
         state = self.release_state.read()
@@ -206,6 +227,7 @@ class ReleaseManager:
             "previous_release": str(active) if active else "",
         })
         self._restart()
+        self._status("verifying", f"Verifica del rollback {previous.name}", tag=previous.name)
         expected = (previous / "VERSION").read_text(encoding="utf-8").strip() if (previous / "VERSION").is_file() else ""
         if not self._healthy(expected_version=expected):
             if active and active.is_dir():
@@ -213,7 +235,7 @@ class ReleaseManager:
                 self._switch(active)
                 self._restart()
             raise RuntimeError("Il rollback non ha superato l'health check")
-        self._status("rolled_back", f"Ripristinata {previous.name}")
+        self._finish("rolled_back", f"Ripristinata {previous.name}", tag=previous.name)
 
     def run_request(self) -> None:
         request = self.request_file.read()

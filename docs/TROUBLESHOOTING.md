@@ -10,6 +10,8 @@ nmcli device status
 echo scan | cec-client -s -d 1
 ```
 
+Se dopo l'aggiornamento `0.2.0` il portale segnala che non può leggere `release-state.json`, rilanciare il bootstrap più recente. L'installer ripara proprietario e permessi dei file JSON in `/var/lib/raspberrytv`; URL, Wi-Fi e configurazione Telegram non vengono cancellati.
+
 I log sono limitati da journald a 100 MB persistenti e 14 giorni.
 
 ## La UI LAN non si apre
@@ -39,6 +41,8 @@ I log sono limitati da journald a 100 MB persistenti e 14 giorni.
 - Provare `echo scan | cec-client -s -d 1` e osservare `journalctl -fu raspberrytv-cec` mentre si premono i tasti.
 - Alcune TV non inviano Back/Home. Adattare i nomi in `cec_bridge.py` dopo aver osservato l'output reale.
 - Se il Pi non viene rilevato, provare `hdmi_force_hotplug=1` nella configurazione boot, come suggerito dalla documentazione libCEC.
+- Se il pannello va in standby mentre la TV è accesa, verificare nei log del kiosk che `xset` sia disponibile e controllare `xset q` con `DISPLAY=:0`: Screen Saver deve essere disabilitato e DPMS deve risultare Disabled.
+- Se il browser non segue accensione e spegnimento, osservare `journalctl -fu raspberrytv-cec`: devono comparire `Stato alimentazione TV: accesa/spenta`. Alcune TV richiedono di abilitare separatamente controllo alimentazione e selezione automatica sorgente.
 
 ## Le frecce non seguono la geometria della pagina
 

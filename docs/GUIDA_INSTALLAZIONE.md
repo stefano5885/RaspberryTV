@@ -66,6 +66,10 @@ Lo script:
 7. crea i servizi `systemd`;
 8. avvia applicazione web, schermata di caricamento, browser kiosk e bridge CEC.
 
+Durante l'installazione vengono inoltre disabilitati salvaschermo e standby software dell'uscita video. Il Raspberry resta acceso quando la TV viene spenta: in questo modo può ricevere il successivo evento CEC, riaprire il browser e richiamare automaticamente l'ingresso HDMI corretto.
+
+La sessione kiosk non usa il pannello né le icone del desktop Raspberry Pi. Prima del browser viene applicato un wallpaper tecnico “Kiosk non avviato”, che rimane visibile se Brave si chiude e durante i tre secondi precedenti il tentativo automatico di riapertura.
+
 Sul Raspberry Pi 3 l'operazione può richiedere 10–20 minuti. Non togliere alimentazione e non chiudere la connessione finché compare “Installazione completata”.
 
 ### Variante più prudente
@@ -135,6 +139,7 @@ Il dispositivo installa soltanto tag stabili `vMAJOR.MINOR.PATCH`. Se il nuovo s
 - **Installazione interrotta:** rilanciare lo stesso comando; lo script è progettato per essere ripetibile.
 - **TV nera:** consultare [Troubleshooting](TROUBLESHOOTING.md) e i log del servizio kiosk.
 - **Telecomando non funziona:** abilitare HDMI-CEC nelle impostazioni della TV e controllare `raspberrytv-cec`.
+- **La TV non riapre il kiosk:** controllare che l'avvio automatico dei dispositivi e il cambio sorgente siano consentiti nelle impostazioni CEC della TV; alcuni produttori espongono opzioni separate.
 
 ## 10. Sicurezza
 

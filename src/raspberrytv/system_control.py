@@ -45,6 +45,13 @@ class SystemController:
         if tag and StableTag.fullmatch(tag) is None:
             raise ValueError("Tag release non valido")
         JsonFile(self.state_dir / "update-request.json", {}).write({"action": action, "tag": tag})
+        JsonFile(self.state_dir / "update-status.json", {}).write({
+            "status": "queued",
+            "message": "Aggiornamento in coda" if action == "update" else "Rollback in coda",
+            "tag": tag,
+        })
+        JsonFile(self.state_dir / "state.json", {}).update(browser_target="update")
+        self._invoke("browser-update")
         self._invoke("update-start")
 
     def reboot(self) -> None:

@@ -1,6 +1,6 @@
 [Unit]
 Description=RaspberryTV HDMI-CEC input bridge
-After=raspberrytv-kiosk.service
+After=raspberrytv-web.service
 
 [Service]
 Type=simple

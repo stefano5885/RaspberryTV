@@ -9,6 +9,7 @@ Compilare su Raspberry Pi 3 Model B e sulla TV destinata all'uso.
 - [ ] Con URL valido il kiosk parte automaticamente.
 - [ ] Senza URL appare la dashboard.
 - [ ] Dopo reboot completo torna al kiosk.
+- [ ] Chiudendo Brave manualmente compare il wallpaper “Kiosk non avviato” senza barra, cestino o icone, poi il browser riparte entro 5 secondi.
 - [ ] Interruzione alimentazione non corrompe configurazione o stato.
 
 ## Rete
@@ -34,6 +35,11 @@ Compilare su Raspberry Pi 3 Model B e sulla TV destinata all'uso.
 - [ ] Cambio URL e “Apri sito” non richiedono reboot del Pi.
 
 ## HDMI-CEC
+
+- [ ] A TV accesa per almeno 30 minuti il segnale non entra in standby e non compare uno schermo nero.
+- [ ] Spegnendo la TV, Brave e la sessione Xorg vengono chiusi entro 20 secondi.
+- [ ] Riaccendendo la TV, il kiosk riparte e l'ingresso HDMI del Raspberry viene selezionato automaticamente.
+- [ ] Il cambio ingresso non viene ripetuto durante il normale utilizzo a TV accesa.
 
 - [ ] TV rileva RaspberryTV come dispositivo playback.
 - [ ] Giù/Destra spostano il focus avanti nel sito reale.

@@ -28,6 +28,13 @@ ASSET_ROOT = Path(__file__).with_name("web")
 class Application:
     def __init__(self, store: ConfigStore | None = None):
         self.store = store or ConfigStore()
+        update = self.store.update_file.read()
+        if update.get("status") == "rebooting":
+            self.store.update_file.write({
+                **update,
+                "status": "success",
+                "message": "Aggiornamento completato e sistema riavviato",
+            })
         self.system = SystemController(self.store.state_dir)
         self.metrics = SystemMetrics()
         self.updates = UpdateInspector()
@@ -157,6 +164,8 @@ class Handler(BaseHTTPRequestHandler):
                 self._asset("index.html")
             elif path == "/loading":
                 self._asset("loading.html")
+            elif path == "/updating":
+                self._asset("updating.html")
             elif path.startswith("/static/"):
                 self._asset(path.removeprefix("/static/"))
             elif path == "/api/health":
@@ -170,7 +179,9 @@ class Handler(BaseHTTPRequestHandler):
                 state = self.application.store.state_file.read()
                 config = self.application.store.config_file.read()
                 target = "http://127.0.0.1:8080/"
-                if state.get("browser_target") == "site" and config.get("url"):
+                if state.get("browser_target") == "update":
+                    target = "http://127.0.0.1:8080/updating"
+                elif state.get("browser_target") == "site" and config.get("url"):
                     target = str(config["url"])
                 self._text(target)
             elif path == "/api/update/check":

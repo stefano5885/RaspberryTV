@@ -1,5 +1,6 @@
 const $ = (selector) => document.querySelector(selector);
 let availableTag = "";
+let updateMonitor = 0;
 
 function toast(message, error = false) {
   const node = $("#toast");
@@ -37,6 +38,34 @@ function telemetry(id, online) {
   document.querySelector(id)?.closest(".telemetry-card")?.classList.toggle("offline", !online);
 }
 
+function showUpdate(message) {
+  const overlay = $("#update-overlay");
+  overlay.classList.add("visible");
+  overlay.setAttribute("aria-hidden", "false");
+  $("#update-overlay-message").textContent = message;
+}
+
+async function monitorUpdate() {
+  clearTimeout(updateMonitor);
+  updateMonitor = 0;
+  try {
+    const data = await request("/api/status");
+    const update = data.update || {};
+    showUpdate(update.message || "Aggiornamento in corso…");
+    if (["failed", "no_change"].includes(update.status)) {
+      setTimeout(() => {
+        $("#update-overlay").classList.remove("visible");
+        $("#update-overlay").setAttribute("aria-hidden", "true");
+        loadStatus().catch(() => {});
+      }, 5000);
+      return;
+    }
+  } catch (_) {
+    showUpdate("Riavvio dei servizi o del Raspberry in corso…");
+  }
+  updateMonitor = setTimeout(monitorUpdate, 1000);
+}
+
 async function loadStatus() {
   const data = await request("/api/status");
   const config = data.config;
@@ -67,6 +96,10 @@ async function loadStatus() {
   const update = data.update || {};
   if (update.status && update.status !== "idle") {
     $("#update-summary").textContent = `Ultima operazione: ${update.status}${update.message ? ` · ${update.message}` : ""}`;
+  }
+  if (["queued", "preparing", "activating", "verifying", "rolling_back", "rebooting"].includes(update.status)) {
+    showUpdate(update.message || "Aggiornamento in corso…");
+    if (!updateMonitor) monitorUpdate();
   }
   const rollback = $("[data-action='rollback']");
   rollback.disabled = !data.release?.previous;
@@ -116,20 +149,28 @@ document.addEventListener("click", async (event) => {
     }
     if (action === "update-apply") {
       if (!availableTag || !confirm(`Installare ${availableTag}?`)) return;
+      showUpdate(`Avvio installazione ${availableTag}…`);
       await request("/api/update/apply", { method: "POST", body: JSON.stringify({ tag: availableTag }) });
-      toast("Aggiornamento avviato; la UI potrebbe riavviarsi");
+      monitorUpdate();
     }
     if (action === "rollback") {
       if (!confirm("Ripristinare la release precedente?")) return;
+      showUpdate("Avvio ripristino della release precedente…");
       await request("/api/update/rollback", { method: "POST", body: "{}" });
-      toast("Rollback avviato");
+      monitorUpdate();
     }
     if (action === "reboot") {
       if (!confirm("Riavviare il Raspberry Pi?")) return;
       await request("/api/system/reboot", { method: "POST", body: "{}" });
       toast("Riavvio richiesto");
     }
-  } catch (error) { toast(error.message, true); }
+  } catch (error) {
+    if (["update-apply", "rollback"].includes(action)) {
+      $("#update-overlay").classList.remove("visible");
+      $("#update-overlay").setAttribute("aria-hidden", "true");
+    }
+    toast(error.message, true);
+  }
 });
 
 loadStatus().catch((error) => toast(error.message, true));

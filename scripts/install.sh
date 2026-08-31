@@ -14,7 +14,7 @@ export DEBIAN_FRONTEND=noninteractive
 apt-get update
 apt-get install -y --no-install-recommends \
     ca-certificates curl git openssh-client python3 sudo network-manager avahi-daemon \
-    cec-utils xserver-xorg-core xserver-xorg-legacy xinit openbox unclutter
+    cec-utils xserver-xorg-core xserver-xorg-legacy x11-xserver-utils xinit openbox unclutter feh
 
 if [ "$(dpkg --print-architecture)" = "arm64" ]; then
     curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg \
@@ -42,7 +42,7 @@ version="$(tr -d '\r\n ' < "$source_dir/VERSION")"
 release_dir="/opt/raspberrytv/releases/v$version"
 install -d -o root -g root -m 0755 "$release_dir"
 if [ "$source_dir" != "$release_dir" ]; then
-    for entry in VERSION pyproject.toml README.md CHANGELOG.md src scripts config docs systemd; do
+    for entry in VERSION pyproject.toml README.md CHANGELOG.md assets src scripts config docs systemd; do
         cp -a "$source_dir/$entry" "$release_dir/"
     done
 fi
@@ -61,6 +61,12 @@ if [ ! -f /etc/raspberrytv/secrets.json ]; then
     chown raspberrytv:raspberrytv /etc/raspberrytv/secrets.json
     chmod 0600 /etc/raspberrytv/secrets.json
 fi
+
+# Le release 0.2.0 potevano lasciare questi file a root dopo un update.
+# Il backend deve poterli leggere e aggiornare con il proprio utente limitato.
+find /var/lib/raspberrytv -maxdepth 1 -type f -name '*.json' \
+    -exec chown raspberrytv:raspberrytv {} + \
+    -exec chmod 0600 {} +
 
 install -o root -g root -m 0755 "$source_dir/scripts/raspberrytv-control.py" /usr/local/sbin/raspberrytv-control
 printf '%s\n' 'raspberrytv ALL=(root) NOPASSWD: /usr/local/sbin/raspberrytv-control *' > /etc/sudoers.d/raspberrytv

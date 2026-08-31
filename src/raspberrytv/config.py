@@ -69,6 +69,10 @@ class JsonFile:
     def write(self, data: dict[str, Any]) -> None:
         with self._lock:
             self.path.parent.mkdir(parents=True, exist_ok=True)
+            try:
+                ownership = self.path.stat()
+            except FileNotFoundError:
+                ownership = self.path.parent.stat()
             handle, temporary = tempfile.mkstemp(prefix=f".{self.path.name}.", dir=self.path.parent)
             try:
                 with os.fdopen(handle, "w", encoding="utf-8") as stream:
@@ -77,6 +81,13 @@ class JsonFile:
                     stream.flush()
                     os.fsync(stream.fileno())
                 os.chmod(temporary, self.mode)
+                if hasattr(os, "chown"):
+                    try:
+                        os.chown(temporary, ownership.st_uid, ownership.st_gid)
+                    except PermissionError:
+                        # A non-root process already creates the file with its
+                        # own identity; only root needs to restore ownership.
+                        pass
                 os.replace(temporary, self.path)
             finally:
                 try:

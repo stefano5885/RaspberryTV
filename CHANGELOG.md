@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.3.0 - 2026-08-31
+
+- Wallpaper tecnico di fallback “Kiosk non avviato”, installato nella sessione Openbox priva di barra, cestino e icone.
+- Riapertura automatica di Brave dopo una chiusura o un crash inatteso.
+- Riparazione automatica dei permessi di `release-state.json` e degli altri file di stato dopo gli aggiornamenti eseguiti come root.
+- Schermata di manutenzione visibile su TV e dashboard durante update/rollback, con riavvio automatico quando cambia release.
+- Disabilitati screen blanking, salvaschermo e DPMS nella sessione kiosk.
+- Monitoraggio periodico dello stato di alimentazione TV tramite HDMI-CEC.
+- Chiusura di Brave e Xorg quando la TV entra in standby.
+- Riavvio del kiosk e selezione automatica della sorgente RaspberryTV quando la TV si accende.
+
 ## 0.2.0 - 2026-08-31
 
 - Nuova dashboard tecnica “control plane” con CPU, temperatura e RAM.

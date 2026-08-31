@@ -61,6 +61,14 @@ def main() -> None:
     elif action == "browser-admin":
         write_state(browser_target="admin")
         run(["systemctl", "restart", "raspberrytv-kiosk.service"])
+    elif action == "browser-update":
+        run(["systemctl", "try-restart", "raspberrytv-kiosk.service"])
+    elif action == "tv-on":
+        write_state(tv_power="on")
+        run(["systemctl", "start", "raspberrytv-kiosk.service"])
+    elif action == "tv-off":
+        write_state(tv_power="standby")
+        run(["systemctl", "stop", "raspberrytv-kiosk.service"])
     elif action == "wifi-apply":
         wifi_apply()
     elif action == "update-start":

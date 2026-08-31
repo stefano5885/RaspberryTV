@@ -22,6 +22,10 @@ Browser TV/LAN ----------------HTTP :8080---------------+
 
 `raspberrytv-kiosk.service` avvia una sessione Xorg/Openbox minimale e un solo browser. Sull'immagine Raspberry Pi OS completa, il display manager del desktop viene disabilitato per impedire il conflitto su `:0`. Il browser mostra subito una pagina tecnica di boot, attende il backend e apre automaticamente il sito configurato oppure la dashboard.
 
+Xorg viene avviato con screen blanking e DPMS disabilitati; anche `xset` riafferma la configurazione nella sessione. Finché la TV è accesa il segnale HDMI resta quindi attivo senza timeout software.
+
+Openbox non avvia pannelli, file manager desktop, cestino o icone. `feh` applica il wallpaper diagnostico incluso nella release prima di Brave. Se il browser termina inaspettatamente, lo sfondo resta visibile e lo script tenta di riaprire Brave dopo tre secondi; quando lo spegnimento arriva dal CEC, systemd arresta invece l'intera sessione.
+
 Il profilo Brave viene riconfigurato prima di ogni avvio: adblock attivo, filtro cosmetico first-party in modalità `BLOCK` (Aggressive), P3A e usage ping disabilitati. Le policy amministrative impediscono la ricomparsa dei relativi banner.
 
 ### CEC e focus
@@ -37,6 +41,8 @@ Il profilo Brave viene riconfigurato prima di ogni avvio: adblock attivo, filtro
 | Home / Root menu | riavvio kiosk sulla dashboard | Amministrazione locale |
 
 La scelta Tab/Shift+Tab è deliberata: funziona sugli elementi semanticamente focusabili anche nei siti esterni, dove non è possibile iniettare JavaScript. Il comportamento esatto di Home/Back dipende dai codici inviati dalla TV.
+
+Lo stesso client CEC interroga ogni 15 secondi lo stato di alimentazione del televisore. In standby arresta `raspberrytv-kiosk.service`, chiudendo Brave e Xorg ma lasciando acceso il Raspberry e il listener CEC. Quando rileva la riaccensione, riavvia il kiosk e invia `Active Source` per selezionare l'ingresso HDMI del Raspberry. Il cambio sorgente avviene una sola volta per ogni transizione verso acceso.
 
 ### Networking
 

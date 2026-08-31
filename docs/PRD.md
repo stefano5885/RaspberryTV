@@ -89,6 +89,9 @@ Occorre mostrare stabilmente un sito pubblico su una TV senza lasciare tastiera 
 | R17 | Schermata di attesa e apertura automatica | P0 | Uso senza browser LAN | Al boot appare lo stato di caricamento e il sito configurato si apre senza premere pulsanti |
 | R18 | Telemetria CPU e RAM | P1 | Diagnosi Pi 3 | Dashboard mostra CPU, temperatura, load, RAM usata e percentuale |
 | R19 | Brave Shields Aggressive e nessun banner analytics | P0 | Esperienza kiosk/privacy | Profilo e policy impongono filtro aggressivo; P3A, stats ping, Web Discovery e Translate sono disabilitati |
+| R20 | Ciclo vita TV via HDMI-CEC | P0 | Uso automatico e durata pannello | Nessun blanking/DPMS a TV accesa; a TV spenta browser chiuso; alla riaccensione kiosk avviato e sorgente HDMI selezionata |
+| R21 | Feedback e sicurezza aggiornamenti | P0 | Operatività remota | Dashboard e TV mostrano manutenzione; file di stato restano leggibili dal servizio; un cambio release termina con reboot automatico |
+| R22 | Desktop kiosk neutro e diagnostico | P1 | Stato comprensibile | Nessuna barra/icona/cestino; wallpaper “Kiosk non avviato” visibile senza browser; crash browser seguito da riapertura automatica |
 
 ## 8. User Experience and Flows
 
@@ -129,6 +132,7 @@ Occorre mostrare stabilmente un sito pubblico su una TV senza lasciare tastiera 
 **Risks**
 
 - Le implementazioni CEC dei produttori differiscono per codici e tasto Back.
+- Alcune TV non comunicano correttamente lo stato di alimentazione o ignorano il comando CEC `Active Source`; la funzione richiede collaudo sul modello reale.
 - Il Pi 3 può essere lento su siti moderni pesanti; Brave e filtri aumentano il carico.
 - La modalità Shields Aggressive può interrompere funzionalità first-party su alcuni siti; il requisito la impone e va collaudato sull'URL reale.
 - L'iniezione input dipende dalla sessione grafica (Wayland/X11) e va provata sull'immagine scelta.
