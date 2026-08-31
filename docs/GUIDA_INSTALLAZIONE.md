@@ -140,7 +140,7 @@ Il dispositivo installa soltanto tag stabili `vMAJOR.MINOR.PATCH`. Se il nuovo s
 - **SSH rifiutato:** controllare che SSH sia stato abilitato in Raspberry Pi Imager.
 - **Errore architettura:** rifare la SD scegliendo Raspberry Pi OS **64-bit**.
 - **Schermo nero con cursore:** rilanciare il bootstrap per installare la release correttiva più recente; il desktop completo deve essere disabilitato in favore della sessione kiosk.
-- **Compare ancora lo splash Raspberry Pi standard:** installare almeno la versione 0.3.3 dalla dashboard e riavviare; la correzione viene applicata automaticamente all'avvio del kiosk.
+- **Compare lo splash standard o l'elenco dei servizi `[ OK ]`:** installare almeno la versione 0.3.4 dalla dashboard e riavviare; la correzione viene applicata automaticamente all'avvio del kiosk.
 - **Installazione interrotta:** rilanciare lo stesso comando; lo script è progettato per essere ripetibile.
 - **TV nera:** consultare [Troubleshooting](TROUBLESHOOTING.md) e i log del servizio kiosk.
 - **Telecomando non funziona:** abilitare HDMI-CEC nelle impostazioni della TV e controllare `raspberrytv-cec`.

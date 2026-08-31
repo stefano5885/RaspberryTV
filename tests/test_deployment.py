@@ -28,6 +28,9 @@ class DeploymentTests(unittest.TestCase):
         self.assertIn("configure-splash", script)
         self.assertIn("do_boot_splash 1", script)
         self.assertIn("disable_splash=1", script)
+        self.assertIn("systemd.show_status=false", script)
+        self.assertIn("consoleblank=0", script)
+        self.assertIn('boot_args quiet loglevel=3', script)
 
     def test_brave_keeps_aggressive_shields_without_domain_interstitial(self):
         script = (ROOT / "scripts" / "run-kiosk.sh").read_text(encoding="utf-8")

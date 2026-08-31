@@ -43,6 +43,19 @@ else
     fi
 fi
 
+# configure-splash e raspi-config rimuovono "quiet". Senza questi parametri
+# systemd stampa i servizi [ OK ] sulla console e copre il logo fullscreen.
+# Manteniamo Plymouth disattivato (nessun token "splash"), ma rendiamo il boot
+# davvero silenzioso e impediamo lo spegnimento della console.
+if [ -f "$cmdline" ]; then
+    boot_args="$(tr '\r\n' '  ' < "$cmdline")"
+    for key in quiet loglevel systemd.show_status rd.systemd.show_status udev.log_level consoleblank; do
+        boot_args="$(printf '%s\n' "$boot_args" | sed -E "s/(^|[[:space:]])${key}(=[^[:space:]]*)?([[:space:]]|$)/ /g")"
+    done
+    boot_args="$(printf '%s\n' "$boot_args" | tr -s ' ' | sed -E 's/^ +| +$//g')"
+    printf '%s\n' "$boot_args quiet loglevel=3 systemd.show_status=false rd.systemd.show_status=false udev.log_level=3 consoleblank=0" > "$cmdline"
+fi
+
 # Nasconde anche il breve riquadro arcobaleno del firmware, che è indipendente
 # sia dal logo fullscreen sia da Plymouth.
 config=/boot/firmware/config.txt

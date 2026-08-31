@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.4 - 2026-08-31
+
+- Ripristinato l'avvio silenzioso dopo la configurazione dello splash personalizzato.
+- Nascosti i messaggi di avanzamento systemd `[ OK ]` che coprivano l'immagine RaspberryTV.
+- Disabilitato anche il blanking della console già dalla fase iniziale del boot.
+
 ## 0.3.3 - 2026-08-31
 
 - Eliminato lo splash Plymouth standard che poteva apparire dopo l'immagine RaspberryTV.
