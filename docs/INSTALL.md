@@ -10,7 +10,7 @@ Per la procedura più semplice basata sul repository GitHub pubblico, usare la [
 
 ## Metodo A: installazione su Raspberry Pi OS già avviato
 
-1. Con Raspberry Pi Imager scegliere Raspberry Pi 3 e **Raspberry Pi OS Lite 64-bit** stabile.
+1. Con Raspberry Pi Imager scegliere Raspberry Pi 3 e **Raspberry Pi OS 64-bit** stabile. Sono supportate sia Lite sia l'immagine completa; l'installer disabilita il desktop completo per evitare due sessioni grafiche concorrenti.
 2. Nelle opzioni di Imager configurare hostname (ad esempio `raspberrytv`), utente amministrativo e, facoltativamente, SSH. Non serve configurare il Wi-Fi se si usa Ethernet.
 3. Scrivere la SD, inserirla, collegare HDMI, Ethernet e alimentazione.
 4. Clonare il repository sul Pi.
@@ -31,7 +31,7 @@ Questo metodo usa SSH per la prima installazione; non richiede tastiera o termin
 
 Questo metodo richiede un computer Linux o WSL capace di montare la partizione ext4 della SD.
 
-1. Scrivere Raspberry Pi OS Lite 64-bit con Imager e impostare hostname/utente.
+1. Scrivere Raspberry Pi OS 64-bit con Imager e impostare hostname/utente.
 2. Reinserire e montare la partizione root della SD, ad esempio in `/media/pi-root`.
 3. Dal repository eseguire:
 

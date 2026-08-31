@@ -23,6 +23,11 @@ Compilare su Raspberry Pi 3 Model B e sulla TV destinata all'uso.
 
 - [ ] Risoluzione e overscan corretti sulla TV.
 - [ ] Brave ARM64 parte fullscreen senza first-run, popup o notifiche.
+- [ ] Il boot mostra la schermata tecnica di attesa e apre automaticamente l'URL senza intervento LAN.
+- [ ] Su immagine OS completa il vecchio desktop non compete con la sessione kiosk.
+- [ ] Nessun banner P3A/lingua compare nella parte alta di Brave.
+- [ ] Shields mostra “Sistemi di tracciamento e annunci” su Aggressive.
+- [ ] Dashboard mostra valori plausibili di CPU, temperatura e RAM.
 - [ ] Se Brave fallisce, Chromium fallback mantiene le funzioni.
 - [ ] Il sito reale carica e resta fluido per almeno 4 ore.
 - [ ] Crash forzato del browser viene recuperato da systemd.

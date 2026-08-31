@@ -3,93 +3,120 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>RaspberryTV</title>
+  <meta name="theme-color" content="#070a0f">
+  <title>RaspberryTV · Control Plane</title>
   <link rel="stylesheet" href="/static/style.css">
   <script src="/static/app.js" defer></script>
 </head>
 <body>
-  <header>
-    <div>
-      <p class="eyebrow">KIOSK CONTROL</p>
-      <h1>RaspberryTV</h1>
+  <div class="grid" aria-hidden="true"></div>
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark"><i></i><i></i><i></i></span>
+      <div>
+        <p class="kicker">RASPBERRYTV // CONTROL PLANE</p>
+        <h1>Kiosk node</h1>
+      </div>
     </div>
-    <div class="status-pill" id="overall-status">Caricamento…</div>
+    <div class="node-state" id="overall-status"><span></span>INIZIALIZZAZIONE</div>
   </header>
 
   <main>
-    <section class="hero panel">
-      <div>
-        <p class="label">URL attivo</p>
-        <p class="current-url" id="current-url">—</p>
+    <section class="command panel" data-module="00">
+      <div class="command-copy">
+        <span class="section-label">TARGET_URL</span>
+        <strong id="current-url">Caricamento configurazione…</strong>
       </div>
-      <button class="primary" data-action="open-site">Apri sito</button>
+      <button class="button button-primary" data-action="open-site"><span>▶</span> AVVIA KIOSK</button>
     </section>
 
-    <section class="cards" aria-label="Stato sistema">
-      <article class="panel metric"><span>Ethernet</span><strong id="ethernet">—</strong></article>
-      <article class="panel metric"><span>Wi-Fi</span><strong id="wifi">—</strong></article>
-      <article class="panel metric"><span>Telegram</span><strong id="telegram">—</strong></article>
-      <article class="panel metric"><span>Versione</span><strong id="version">—</strong></article>
+    <section class="telemetry" aria-label="Telemetria sistema">
+      <article class="telemetry-card">
+        <span class="telemetry-code">NET.01</span><span class="telemetry-label">Ethernet</span>
+        <strong id="ethernet">—</strong><i class="signal"></i>
+      </article>
+      <article class="telemetry-card">
+        <span class="telemetry-code">NET.02</span><span class="telemetry-label">Wi-Fi</span>
+        <strong id="wifi">—</strong><i class="signal"></i>
+      </article>
+      <article class="telemetry-card gauge-card">
+        <span class="telemetry-code">SYS.01</span><span class="telemetry-label">CPU</span>
+        <strong id="cpu">—</strong><span class="gauge"><i id="cpu-gauge"></i></span>
+        <small id="cpu-detail">LOAD — · TEMP —</small>
+      </article>
+      <article class="telemetry-card gauge-card">
+        <span class="telemetry-code">SYS.02</span><span class="telemetry-label">RAM</span>
+        <strong id="ram">—</strong><span class="gauge"><i id="ram-gauge"></i></span>
+        <small id="ram-detail">— / —</small>
+      </article>
+      <article class="telemetry-card">
+        <span class="telemetry-code">EXT.01</span><span class="telemetry-label">Telegram</span>
+        <strong id="telegram">—</strong><i class="signal"></i>
+      </article>
+      <article class="telemetry-card">
+        <span class="telemetry-code">APP.01</span><span class="telemetry-label">Release</span>
+        <strong id="version">—</strong><i class="signal"></i>
+      </article>
     </section>
 
-    <section class="layout">
-      <article class="panel">
-        <h2>Contenuto</h2>
+    <section class="modules">
+      <article class="panel module" data-module="01">
+        <header><div><span class="section-label">CONTENT ROUTING</span><h2>Destinazione</h2></div><span class="module-state">READY</span></header>
         <form id="url-form">
-          <label for="url">Indirizzo HTTP/HTTPS</label>
-          <div class="form-row">
-            <input id="url" name="url" type="url" placeholder="https://example.com" required>
-            <button type="submit">Salva URL</button>
+          <label for="url">URL HTTP/HTTPS</label>
+          <div class="input-action">
+            <input id="url" name="url" type="url" placeholder="https://example.com/display" required>
+            <button class="button" type="submit">SALVA</button>
           </div>
         </form>
-        <button data-action="telegram-refresh">Aggiorna URL da Telegram</button>
+        <button class="button button-ghost" data-action="telegram-refresh">↻ ACQUISISCI URL DA TELEGRAM</button>
       </article>
 
-      <article class="panel">
-        <h2>Wi-Fi</h2>
+      <article class="panel module" data-module="02">
+        <header><div><span class="section-label">NETWORK INTERFACE</span><h2>Wi-Fi</h2></div><span class="module-state">CONFIG</span></header>
         <form id="wifi-form">
-          <label for="ssid">Nome rete</label>
+          <label for="ssid">SSID</label>
           <input id="ssid" name="ssid" autocomplete="off" maxlength="32" required>
-          <label for="wifi-password">Password</label>
+          <label for="wifi-password">PASSWORD</label>
           <input id="wifi-password" name="password" type="password" minlength="8" maxlength="63" required>
-          <button type="submit">Connetti Wi-Fi</button>
+          <button class="button" type="submit">APPLICA PROFILO</button>
         </form>
       </article>
 
-      <article class="panel">
-        <h2>Telegram</h2>
+      <article class="panel module" data-module="03">
+        <header><div><span class="section-label">REMOTE INPUT</span><h2>Telegram</h2></div><span class="module-state">OPTIONAL</span></header>
         <form id="telegram-form">
-          <label for="bot-token">Bot token <small>(vuoto per non cambiarlo)</small></label>
+          <label for="bot-token">BOT TOKEN <small>VUOTO = INVARIATO</small></label>
           <input id="bot-token" name="token" type="password" autocomplete="new-password">
-          <label for="chat-id">Chat ID</label>
-          <input id="chat-id" name="chat_id" required>
-          <label for="topic-id">Topic ID <small>(opzionale)</small></label>
-          <input id="topic-id" name="topic_id">
-          <button type="submit">Salva Telegram</button>
+          <div class="split">
+            <div><label for="chat-id">CHAT ID</label><input id="chat-id" name="chat_id" required></div>
+            <div><label for="topic-id">TOPIC ID</label><input id="topic-id" name="topic_id"></div>
+          </div>
+          <button class="button" type="submit">SALVA CANALE</button>
         </form>
       </article>
 
-      <article class="panel">
-        <h2>Aggiornamenti</h2>
+      <article class="panel module" data-module="04">
+        <header><div><span class="section-label">RELEASE CONTROL</span><h2>Aggiornamenti</h2></div><span class="module-state">SEMVER</span></header>
         <form id="repository-form">
-          <label for="repository-url">Repository Git</label>
-          <input id="repository-url" name="repository_url" placeholder="https://… oppure git@…" required>
-          <button type="submit">Salva repository</button>
+          <label for="repository-url">ORIGIN REPOSITORY</label>
+          <input id="repository-url" name="repository_url" placeholder="https://github.com/…" required>
+          <button class="button" type="submit">SALVA ORIGIN</button>
         </form>
-        <p id="update-summary">Ultima verifica non eseguita.</p>
+        <p class="console-line" id="update-summary"><span>›</span> Nessuna verifica eseguita.</p>
         <div class="button-row">
-          <button data-action="update-check">Controlla</button>
-          <button class="primary" data-action="update-apply" disabled>Aggiorna applicazione</button>
-          <button data-action="rollback" disabled>Rollback</button>
+          <button class="button button-ghost" data-action="update-check">CHECK</button>
+          <button class="button button-primary" data-action="update-apply" disabled>DEPLOY</button>
+          <button class="button button-danger" data-action="rollback" disabled>ROLLBACK</button>
         </div>
       </article>
     </section>
 
-    <section class="panel system-actions">
-      <h2>Sistema</h2>
+    <section class="panel footer-panel" data-module="05">
+      <div><span class="section-label">NODE OPERATIONS</span><h2>Controllo sistema</h2></div>
       <div class="button-row">
-        <button data-action="refresh">Aggiorna stato</button>
-        <button class="danger" data-action="reboot">Riavvia Raspberry Pi</button>
+        <button class="button button-ghost" data-action="refresh">↻ REFRESH TELEMETRIA</button>
+        <button class="button button-danger" data-action="reboot">⏻ RIAVVIA NODE</button>
       </div>
     </section>
   </main>

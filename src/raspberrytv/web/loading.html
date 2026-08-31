@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RaspberryTV · Boot</title>
+  <style>
+    :root { color-scheme: dark; --cyan:#3be8ff; --green:#68ff9b; --muted:#6e8295; }
+    * { box-sizing: border-box; }
+    body { margin:0; min-height:100vh; display:grid; place-items:center; overflow:hidden; background:#05080c; color:#d9e7f1; font-family:"DejaVu Sans Mono","Liberation Mono",monospace; }
+    body::before { content:""; position:fixed; inset:0; background-image:linear-gradient(rgb(59 232 255 / 5%) 1px,transparent 1px),linear-gradient(90deg,rgb(59 232 255 / 5%) 1px,transparent 1px); background-size:48px 48px; mask-image:radial-gradient(circle,black,transparent 72%); }
+    main { position:relative; width:min(680px,calc(100% - 56px)); border:1px solid #183244; background:#081018; padding:38px; box-shadow:0 0 80px rgb(0 196 255 / 8%); }
+    .top { display:flex; justify-content:space-between; color:var(--muted); font-size:12px; letter-spacing:.14em; }
+    .mark { width:44px; height:44px; margin:64px 0 28px; border:2px solid var(--cyan); position:relative; animation:spin 3s steps(4,end) infinite; }
+    .mark::after { content:""; position:absolute; inset:9px; background:var(--cyan); box-shadow:0 0 22px var(--cyan); }
+    h1 { margin:0; font-size:clamp(28px,6vw,58px); line-height:1; letter-spacing:-.06em; font-weight:700; }
+    p { color:var(--muted); }
+    .track { height:2px; margin-top:38px; background:#102331; overflow:hidden; }
+    .track::after { content:""; display:block; width:35%; height:100%; background:var(--green); box-shadow:0 0 14px var(--green); animation:scan 1.2s ease-in-out infinite; }
+    #detail { min-height:1.5em; color:var(--green); font-size:13px; }
+    @keyframes scan { from { transform:translateX(-110%); } to { transform:translateX(300%); } }
+    @keyframes spin { to { transform:rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="top"><span>RASPBERRYTV / BOOT</span><span id="attempt">SEQ 001</span></div>
+    <div class="mark" aria-hidden="true"></div>
+    <h1>Avvio del<br>sistema kiosk</h1>
+    <p>Inizializzazione rete, servizi locali e browser.</p>
+    <div class="track"></div>
+    <p id="detail">ATTESA BACKEND...</p>
+  </main>
+  <script>
+    let attempt = 0;
+    async function advance() {
+      attempt += 1;
+      document.querySelector("#attempt").textContent = `SEQ ${String(attempt).padStart(3, "0")}`;
+      try {
+        if (location.protocol === "file:") {
+          await fetch("http://127.0.0.1:8080/api/health", { cache: "no-store" });
+          location.replace("http://127.0.0.1:8080/loading");
+          return;
+        }
+        document.querySelector("#detail").textContent = "SERVIZI ONLINE · APERTURA CONTENUTO...";
+        const response = await fetch("/api/kiosk-target", { cache: "no-store" });
+        if (!response.ok) throw new Error("target unavailable");
+        const target = await response.text();
+        setTimeout(() => location.replace(target), 700);
+        return;
+      } catch (_) {
+        document.querySelector("#detail").textContent = "ATTESA BACKEND...";
+      }
+      setTimeout(advance, 1500);
+    }
+    advance();
+  </script>
+</body>
+</html>

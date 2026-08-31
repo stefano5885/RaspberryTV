@@ -84,12 +84,17 @@ Occorre mostrare stabilmente un sito pubblico su una TV senza lasciare tastiera 
 | R12 | Stato sintetico e journald limitato | P1 | Diagnosi | Dashboard mostra rete/versione/servizi senza segreti |
 | R13 | Polling Telegram periodico opzionale e lento | P2 | Automazione | Disattivato per default; intervallo minimo documentato |
 | R14 | Rollback manuale dalla UI | P1 | Recovery operatore | Disponibile solo se una release precedente è registrata |
-| R15 | Bootstrap pubblico da GitHub con un solo comando | P0 | Setup senza copia manuale | Su Pi 3 con OS Lite 64-bit lo script installa e avvia i servizi senza tastiera locale |
+| R15 | Bootstrap pubblico da GitHub con un solo comando | P0 | Setup senza copia manuale | Su Pi 3 con OS 64-bit lo script installa e avvia i servizi senza tastiera locale |
+| R16 | Compatibilità con immagine OS completa | P0 | Disponibilità Raspberry Pi Imager | Il desktop preinstallato viene disabilitato e non compete con il kiosk su `:0` |
+| R17 | Schermata di attesa e apertura automatica | P0 | Uso senza browser LAN | Al boot appare lo stato di caricamento e il sito configurato si apre senza premere pulsanti |
+| R18 | Telemetria CPU e RAM | P1 | Diagnosi Pi 3 | Dashboard mostra CPU, temperatura, load, RAM usata e percentuale |
+| R19 | Brave Shields Aggressive e nessun banner analytics | P0 | Esperienza kiosk/privacy | Profilo e policy impongono filtro aggressivo; P3A, stats ping, Web Discovery e Translate sono disabilitati |
 
 ## 8. User Experience and Flows
 
 - **UX Notes:** controlli grandi, contrasto elevato, focus visibile, griglia navigabile con frecce, nessuna azione critica al semplice focus. Conferma richiesta per reboot, update e rollback.
 - **Key Screens / States:** dashboard; configurazione URL; Wi-Fi; Telegram; aggiornamenti; stato incompleto; operazione in corso; errore recuperabile.
+- **Direzione visiva:** control plane tecnico, scuro e moderno, con monospace, griglia, indicatori di stato e telemetria leggibile dalla LAN e dalla TV.
 - **Flow References:**
   - Boot -> rete -> servizio web -> URL valido? -> browser sul sito : dashboard.
   - Back dedicato/lungo -> dashboard -> azione -> ritorno al sito.
@@ -112,7 +117,7 @@ Occorre mostrare stabilmente un sito pubblico su una TV senza lasciare tastiera 
 
 ## 10. Dependencies and Integrations
 
-- Raspberry Pi OS Lite 64-bit, release stabile corrente compatibile col Pi 3, con Xorg/Openbox minimi installati dal provisioning.
+- Raspberry Pi OS 64-bit, Lite o completo, release stabile corrente compatibile col Pi 3; Xorg/Openbox minimi e sessione kiosk dedicata sono gestiti dal provisioning.
 - Python 3 standard library; `git`; `curl`; `NetworkManager/nmcli`; `systemd`.
 - Brave ufficiale ARM64. Chromium di Raspberry Pi OS è il fallback se Brave non supera il collaudo.
 - `cec-utils/libCEC` per eventi CEC; `ydotool`/uinput per input sintetico sotto Wayland, con `xdotool` fallback X11 se necessario.
@@ -125,6 +130,7 @@ Occorre mostrare stabilmente un sito pubblico su una TV senza lasciare tastiera 
 
 - Le implementazioni CEC dei produttori differiscono per codici e tasto Back.
 - Il Pi 3 può essere lento su siti moderni pesanti; Brave e filtri aumentano il carico.
+- La modalità Shields Aggressive può interrompere funzionalità first-party su alcuni siti; il requisito la impone e va collaudato sull'URL reale.
 - L'iniezione input dipende dalla sessione grafica (Wayland/X11) e va provata sull'immagine scelta.
 - Una deploy key Git privata mal gestita compromette il repository; deve essere read-only.
 - L'esecuzione diretta di uno script remoto come root richiede fiducia nel repository e in GitHub; viene documentata anche la variante download-ispezione-esecuzione.
@@ -165,7 +171,7 @@ Occorre mostrare stabilmente un sito pubblico su una TV senza lasciare tastiera 
 
 ### Decisioni architetturali
 
-- **OS:** Raspberry Pi OS Lite 64-bit. Il Pi 3 è ARMv8; 64 bit permette Brave ARM64. Xorg e Openbox vengono aggiunti senza un desktop completo, riducendo RAM e processi. L'immagine stabile corrente va bloccata e collaudata prima della distribuzione.
+- **OS:** Raspberry Pi OS 64-bit Lite o completo. Il Pi 3 è ARMv8 e 64 bit permette Brave ARM64. Xorg e Openbox costituiscono la sessione kiosk dedicata; se l'immagine include un desktop, il relativo display manager viene disabilitato. L'immagine stabile corrente va collaudata prima della distribuzione.
 - **Display server/window manager:** usare la sessione desktop supportata dall'immagine. Il bridge privilegia uinput, indipendente dal focus dell'app; X11 è fallback documentato.
 - **Backend/frontend:** un processo Python e HTML/CSS/JS statici, senza framework e senza build frontend.
 - **Storage:** JSON atomici fuori dal checkout, permessi 0600 per segreti.

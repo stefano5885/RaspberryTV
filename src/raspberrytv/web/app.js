@@ -24,6 +24,19 @@ function connected(items) {
   return item ? `${item.connection || item.name}${item.address ? ` · ${item.address}` : ""}` : "Non connessa";
 }
 
+function bytes(value) {
+  if (!Number.isFinite(value)) return "—";
+  const units = ["B", "KB", "MB", "GB"];
+  let amount = value;
+  let unit = 0;
+  while (amount >= 1024 && unit < units.length - 1) { amount /= 1024; unit += 1; }
+  return `${amount.toFixed(unit > 1 ? 1 : 0)} ${units[unit]}`;
+}
+
+function telemetry(id, online) {
+  document.querySelector(id)?.closest(".telemetry-card")?.classList.toggle("offline", !online);
+}
+
 async function loadStatus() {
   const data = await request("/api/status");
   const config = data.config;
@@ -31,14 +44,26 @@ async function loadStatus() {
   $("#url").value = config.url || "";
   $("#ethernet").textContent = connected(data.network.ethernet);
   $("#wifi").textContent = connected(data.network.wifi);
+  telemetry("#ethernet", data.network.ethernet?.some((item) => item.connected));
+  telemetry("#wifi", data.network.wifi?.some((item) => item.connected));
   $("#telegram").textContent = config.telegram_token_configured && config.telegram_chat_id ? "Configurato" : "Da configurare";
+  telemetry("#telegram", config.telegram_token_configured && config.telegram_chat_id);
   $("#version").textContent = data.version;
+  const system = data.system || {};
+  const cpu = system.cpu_percent == null ? Number.NaN : Number(system.cpu_percent);
+  const ram = system.ram || {};
+  $("#cpu").textContent = Number.isFinite(cpu) ? `${cpu.toFixed(1)}%` : "—";
+  $("#cpu-gauge").style.width = `${Number.isFinite(cpu) ? Math.min(100, Math.max(0, cpu)) : 0}%`;
+  $("#cpu-detail").textContent = `LOAD ${system.load_1m ?? "—"} · TEMP ${system.cpu_temperature_c != null ? `${system.cpu_temperature_c}°C` : "—"}`;
+  $("#ram").textContent = Number.isFinite(ram.percent) ? `${ram.percent.toFixed(1)}%` : "—";
+  $("#ram-gauge").style.width = `${Number.isFinite(ram.percent) ? Math.min(100, Math.max(0, ram.percent)) : 0}%`;
+  $("#ram-detail").textContent = `${bytes(ram.used_bytes)} / ${bytes(ram.total_bytes)}`;
   $("#chat-id").value = config.telegram_chat_id || "";
   $("#topic-id").value = config.telegram_topic_id || "";
   $("#repository-url").value = config.repository_url || "";
   const overall = $("#overall-status");
-  overall.textContent = data.network.online ? "Rete connessa" : "Rete non disponibile";
-  overall.className = data.network.online ? "status-pill online" : "status-pill";
+  overall.innerHTML = data.network.online ? "<span></span>NODE ONLINE" : "<span></span>RETE OFFLINE";
+  overall.className = data.network.online ? "node-state online" : "node-state";
   const update = data.update || {};
   if (update.status && update.status !== "idle") {
     $("#update-summary").textContent = `Ultima operazione: ${update.status}${update.message ? ` · ${update.message}` : ""}`;
@@ -108,4 +133,4 @@ document.addEventListener("click", async (event) => {
 });
 
 loadStatus().catch((error) => toast(error.message, true));
-setInterval(() => loadStatus().catch(() => {}), 30000);
+setInterval(() => loadStatus().catch(() => {}), 10000);

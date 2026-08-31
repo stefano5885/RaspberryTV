@@ -16,11 +16,13 @@ Browser TV/LAN ----------------HTTP :8080---------------+
 
 ### Applicazione web
 
-`raspberrytv-web.service` esegue un server HTTP multithread della standard library. Serve HTML/CSS/JavaScript statici e le API JSON. Configurazione e stato sono scritti atomicamente; il token Telegram vive in `secrets.json` e non viene mai restituito dalle API.
+`raspberrytv-web.service` esegue un server HTTP multithread della standard library. Serve HTML/CSS/JavaScript statici e le API JSON, incluse telemetria CPU, temperatura, load e RAM letta da `/proc`. Configurazione e stato sono scritti atomicamente; il token Telegram vive in `secrets.json` e non viene mai restituito dalle API.
 
 ### Kiosk
 
-`raspberrytv-kiosk.service` avvia una sessione Xorg/Openbox minimale e un solo browser. Lo script sceglie nell'ordine Brave, `chromium-browser`, Chromium. La destinazione viene letta localmente dall'app: sito configurato oppure dashboard.
+`raspberrytv-kiosk.service` avvia una sessione Xorg/Openbox minimale e un solo browser. Sull'immagine Raspberry Pi OS completa, il display manager del desktop viene disabilitato per impedire il conflitto su `:0`. Il browser mostra subito una pagina tecnica di boot, attende il backend e apre automaticamente il sito configurato oppure la dashboard.
+
+Il profilo Brave viene riconfigurato prima di ogni avvio: adblock attivo, filtro cosmetico first-party in modalità `BLOCK` (Aggressive), P3A e usage ping disabilitati. Le policy amministrative impediscono la ricomparsa dei relativi banner.
 
 ### CEC e focus
 

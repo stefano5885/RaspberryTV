@@ -16,6 +16,7 @@ from . import __version__
 from .config import ConfigStore
 from .network import network_status
 from .system_control import SystemController
+from .system_metrics import SystemMetrics
 from .telegram_client import TelegramClient, select_latest_url
 from .update import UpdateInspector
 
@@ -28,6 +29,7 @@ class Application:
     def __init__(self, store: ConfigStore | None = None):
         self.store = store or ConfigStore()
         self.system = SystemController(self.store.state_dir)
+        self.metrics = SystemMetrics()
         self.updates = UpdateInspector()
 
     def status(self) -> dict[str, Any]:
@@ -43,6 +45,7 @@ class Application:
                 "previous": Path(str(release.get("previous_release", ""))).name,
             },
             "network": network_status(),
+            "system": self.metrics.read(),
         }
 
     def refresh_telegram(self) -> dict[str, Any]:
@@ -86,7 +89,7 @@ class Handler(BaseHTTPRequestHandler):
     def log_message(self, format: str, *args: Any) -> None:
         LOGGER.info("%s - %s", self.address_string(), format % args)
 
-    def _json(self, payload: Any, status: int = 200) -> None:
+    def _json(self, payload: Any, status: int = 200, cors: bool = False) -> None:
         body = json.dumps(payload, ensure_ascii=False).encode("utf-8")
         self.send_response(status)
         self.send_header("Content-Type", "application/json; charset=utf-8")
@@ -94,6 +97,8 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header("Cache-Control", "no-store")
         self.send_header("X-Content-Type-Options", "nosniff")
         self.send_header("X-Frame-Options", "DENY")
+        if cors:
+            self.send_header("Access-Control-Allow-Origin", "*")
         self.end_headers()
         self.wfile.write(body)
 
@@ -150,10 +155,12 @@ class Handler(BaseHTTPRequestHandler):
         try:
             if path == "/":
                 self._asset("index.html")
+            elif path == "/loading":
+                self._asset("loading.html")
             elif path.startswith("/static/"):
                 self._asset(path.removeprefix("/static/"))
             elif path == "/api/health":
-                self._json({"ok": True, "version": __version__})
+                self._json({"ok": True, "version": __version__}, cors=True)
             elif path == "/api/status":
                 self._json(self.application.status())
             elif path == "/api/kiosk-target":

@@ -40,6 +40,9 @@ class FailingUpdateManager(ReleaseManager):
         self.switches.append(release)
         return self.previous if len(self.switches) == 1 else self.release
 
+    def _sync_system_files(self, release):
+        pass
+
     def _restart(self):
         self.restarts += 1
 

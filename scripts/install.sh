@@ -42,11 +42,12 @@ version="$(tr -d '\r\n ' < "$source_dir/VERSION")"
 release_dir="/opt/raspberrytv/releases/v$version"
 install -d -o root -g root -m 0755 "$release_dir"
 if [ "$source_dir" != "$release_dir" ]; then
-    for entry in VERSION pyproject.toml README.md src scripts config docs systemd; do
+    for entry in VERSION pyproject.toml README.md CHANGELOG.md src scripts config docs systemd; do
         cp -a "$source_dir/$entry" "$release_dir/"
     done
 fi
 find "$release_dir/scripts" -type f -name '*.sh' -exec chmod 0755 {} \;
+find "$release_dir/scripts" -type f -name '*.py' -exec chmod 0755 {} \;
 ln -sfn "$release_dir" /opt/raspberrytv/current
 
 install -d -o raspberrytv -g raspberrytv -m 0750 /etc/raspberrytv /var/lib/raspberrytv
@@ -91,6 +92,14 @@ systemctl daemon-reload
 systemctl enable NetworkManager.service avahi-daemon.service
 systemctl enable raspberrytv-web.service raspberrytv-kiosk.service raspberrytv-cec.service
 systemctl set-default graphical.target
+
+display_manager="$(systemctl show display-manager.service --property=Id --value 2>/dev/null || true)"
+if [ -n "$display_manager" ] && [ "$display_manager" != "display-manager.service" ]; then
+    echo "Disabilito il desktop '$display_manager' per riservare lo schermo al kiosk."
+    systemctl disable "$display_manager" || true
+    systemctl stop "$display_manager" || true
+fi
+
 systemctl restart raspberrytv-web.service
 systemctl restart raspberrytv-kiosk.service || true
 systemctl restart raspberrytv-cec.service || true

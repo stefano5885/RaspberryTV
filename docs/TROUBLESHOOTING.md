@@ -20,10 +20,17 @@ I log sono limitati da journald a 100 MB persistenti e 14 giorni.
 
 ## Schermo nero o browser assente
 
+- Se era installato Raspberry Pi OS completo e si vede solo un cursore, aggiornare alla release `v0.2.0` o successiva rilanciando il bootstrap: il display manager del desktop e il kiosk non devono usare contemporaneamente lo schermo.
 - Controllare `raspberrytv-kiosk.service` e `journalctl -u raspberrytv-kiosk`.
 - Verificare `command -v brave-browser chromium-browser chromium`.
 - Provare un URL leggero; il Pi 3 può esaurire RAM su siti molto pesanti.
 - Se Brave è instabile, rimuoverlo temporaneamente: il launcher sceglierà Chromium al riavvio.
+
+## Banner Brave o Shields non Aggressive
+
+- Verificare in `brave://policy` che `BraveP3AEnabled=false`, `BraveStatsPingEnabled=false` e `DefaultBraveAdblockSetting=2` siano applicate.
+- In `brave://settings/shields`, “Sistemi di tracciamento e annunci” deve risultare su **Aggressive**.
+- Rilanciare il bootstrap se il profilo era stato creato con una release precedente; la configurazione viene applicata prima di ogni avvio kiosk.
 
 ## Telecomando non rilevato
 

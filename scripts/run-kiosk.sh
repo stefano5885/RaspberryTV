@@ -4,6 +4,7 @@ set -eu
 export DISPLAY="${DISPLAY:-:0}"
 openbox-session &
 unclutter -idle 0.5 -root &
+/opt/raspberrytv/current/scripts/configure-browser-profile.py
 
 browser=""
 for candidate in brave-browser chromium-browser chromium; do
@@ -18,11 +19,11 @@ if [ -z "$browser" ]; then
     exit 1
 fi
 
-target=""
-while [ -z "$target" ]; do
-    target="$(curl --fail --silent --max-time 3 http://127.0.0.1:8080/api/kiosk-target || true)"
-    if [ -z "$target" ]; then sleep 2; fi
-done
+rm -f /var/lib/raspberrytv/browser-profile/SingletonLock \
+    /var/lib/raspberrytv/browser-profile/SingletonCookie \
+    /var/lib/raspberrytv/browser-profile/SingletonSocket
+
+loading_page="file:///opt/raspberrytv/current/src/raspberrytv/web/loading.html"
 
 exec "$browser" \
     --kiosk \
@@ -32,7 +33,8 @@ exec "$browser" \
     --disable-infobars \
     --disable-translate \
     --disable-features=Translate,MediaRouter,OptimizationHints,AutofillServerCommunication \
+    --lang=it-IT \
     --autoplay-policy=no-user-gesture-required \
     --password-store=basic \
     --user-data-dir=/var/lib/raspberrytv/browser-profile \
-    "$target"
+    "$loading_page"

@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import logging
 import os
+import shutil
 import subprocess
 import time
 from datetime import datetime, timezone
@@ -102,6 +103,34 @@ class ReleaseManager:
         os.replace(temporary, self.current)
         return previous
 
+    def _sync_system_files(self, release: Path) -> None:
+        for browser in ("brave", "chromium"):
+            policy_dir = Path(f"/etc/{browser}/policies/managed")
+            policy_dir.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(release / "config" / "brave-policy.json", policy_dir / "raspberrytv.json")
+            os.chmod(policy_dir / "raspberrytv.json", 0o644)
+
+        for unit in ("web", "kiosk", "cec", "update"):
+            shutil.copy2(
+                release / "systemd" / f"raspberrytv-{unit}.service",
+                Path("/etc/systemd/system") / f"raspberrytv-{unit}.service",
+            )
+        helper = Path("/usr/local/sbin/raspberrytv-control")
+        shutil.copy2(release / "scripts" / "raspberrytv-control.py", helper)
+        os.chmod(helper, 0o755)
+        self._run(["systemctl", "daemon-reload"], timeout=30)
+
+        manager = subprocess.run(
+            ["systemctl", "show", "display-manager.service", "--property=Id", "--value"],
+            capture_output=True,
+            text=True,
+            timeout=10,
+            check=False,
+        ).stdout.strip()
+        if manager and manager != "display-manager.service":
+            subprocess.run(["systemctl", "disable", manager], timeout=20, check=False)
+            subprocess.run(["systemctl", "stop", manager], timeout=20, check=False)
+
     def _restart(self) -> None:
         self._run(["systemctl", "restart", "raspberrytv-web.service"], timeout=30)
         self._run(["systemctl", "try-restart", "raspberrytv-kiosk.service"], timeout=30)
@@ -138,6 +167,7 @@ class ReleaseManager:
             if requested is None or requested.tag not in self._tags():
                 raise ValueError("Tag richiesto non disponibile")
         release = self._release_for_tag(tag)
+        self._sync_system_files(release)
         previous = self._switch(release)
         self.release_state.write({
             "active_release": str(release),
@@ -147,6 +177,7 @@ class ReleaseManager:
         self._restart()
         if not self._healthy(expected_version=tag):
             if previous and previous.is_dir():
+                self._sync_system_files(previous)
                 self._switch(previous)
                 self._restart()
                 previous_version = (previous / "VERSION").read_text(encoding="utf-8").strip() if (previous / "VERSION").is_file() else ""
@@ -168,6 +199,7 @@ class ReleaseManager:
             raise RuntimeError("Percorso della release precedente non valido")
         active = self.current.resolve() if self.current.exists() else None
         self._status("rolling_back", f"Ripristino {previous.name}")
+        self._sync_system_files(previous)
         self._switch(previous)
         self.release_state.write({
             "active_release": str(previous),
@@ -177,6 +209,7 @@ class ReleaseManager:
         expected = (previous / "VERSION").read_text(encoding="utf-8").strip() if (previous / "VERSION").is_file() else ""
         if not self._healthy(expected_version=expected):
             if active and active.is_dir():
+                self._sync_system_files(active)
                 self._switch(active)
                 self._restart()
             raise RuntimeError("Il rollback non ha superato l'health check")

@@ -17,7 +17,7 @@ Questa è la procedura consigliata per Raspberry Pi 3 Model B. Non richiede tast
 2. Inserire la microSD nel computer.
 3. In Imager selezionare:
    - dispositivo: **Raspberry Pi 3**;
-   - sistema operativo: **Raspberry Pi OS Lite (64-bit)**;
+   - sistema operativo: **Raspberry Pi OS (64-bit)**. L'edizione completa con desktop è supportata; se Lite 64-bit è disponibile, rimane la scelta più leggera;
    - memoria: la microSD corretta.
 4. Aprire le personalizzazioni di Imager e impostare:
    - hostname: `raspberrytv`;
@@ -61,8 +61,10 @@ Lo script:
 2. individua l'ultima release stabile GitHub;
 3. scarica il repository;
 4. installa Brave o il fallback Chromium, Xorg, Openbox, NetworkManager e libCEC;
-5. crea i servizi `systemd`;
-6. avvia applicazione web, browser kiosk e bridge CEC.
+5. se è presente il desktop completo, disabilita il relativo display manager per evitare conflitti con il kiosk dedicato;
+6. configura Brave Shields su **Aggressive** e disabilita banner P3A, usage ping, Web Discovery e traduzione;
+7. crea i servizi `systemd`;
+8. avvia applicazione web, schermata di caricamento, browser kiosk e bridge CEC.
 
 Sul Raspberry Pi 3 l'operazione può richiedere 10–20 minuti. Non togliere alimentazione e non chiudere la connessione finché compare “Installazione completata”.
 
@@ -128,7 +130,8 @@ Il dispositivo installa soltanto tag stabili `vMAJOR.MINOR.PATCH`. Se il nuovo s
 
 - **`raspberrytv.local` non risponde:** usare l'IP indicato dal router.
 - **SSH rifiutato:** controllare che SSH sia stato abilitato in Raspberry Pi Imager.
-- **Errore architettura:** rifare la SD scegliendo Raspberry Pi OS Lite **64-bit**.
+- **Errore architettura:** rifare la SD scegliendo Raspberry Pi OS **64-bit**.
+- **Schermo nero con cursore:** rilanciare il bootstrap per installare la release correttiva più recente; il desktop completo deve essere disabilitato in favore della sessione kiosk.
 - **Installazione interrotta:** rilanciare lo stesso comando; lo script è progettato per essere ripetibile.
 - **TV nera:** consultare [Troubleshooting](TROUBLESHOOTING.md) e i log del servizio kiosk.
 - **Telecomando non funziona:** abilitare HDMI-CEC nelle impostazioni della TV e controllare `raspberrytv-cec`.

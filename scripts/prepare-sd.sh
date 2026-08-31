@@ -15,7 +15,7 @@ fi
 source_dir="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
 bootstrap="$rootfs/opt/raspberrytv-bootstrap"
 install -d -m 0755 "$bootstrap"
-for entry in VERSION pyproject.toml README.md src scripts config docs systemd; do
+for entry in VERSION pyproject.toml README.md CHANGELOG.md src scripts config docs systemd; do
     cp -a "$source_dir/$entry" "$bootstrap/"
 done
 chmod 0755 "$bootstrap/scripts/install.sh"

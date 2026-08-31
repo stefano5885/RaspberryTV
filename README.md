@@ -9,7 +9,10 @@ Kiosk web minimale per Raspberry Pi 3 Model B, controllato dal telecomando TV vi
 - URL manuale o recuperato su richiesta dalla Telegram Bot API.
 - Ethernet di fallback e configurazione Wi-Fi tramite NetworkManager.
 - Brave ARM64 in kiosk; Chromium viene installato come fallback.
+- Brave Shields imposto su Aggressive; P3A, usage ping, Web Discovery e traduzione disabilitati via policy.
 - `libCEC` + tastiera virtuale `uinput` per controllare anche siti esterni.
+- Telemetria locale di CPU, temperatura e RAM.
+- Schermata tecnica di avvio con apertura automatica del sito configurato.
 - Tag Git SemVer, release separate, attivazione con symlink e rollback.
 - `systemd` per avvio e recovery di web, kiosk, CEC e updater one-shot.
 
@@ -24,7 +27,7 @@ Kiosk web minimale per Raspberry Pi 3 Model B, controllato dal telecomando TV vi
 
 ## Installazione rapida sul Raspberry Pi
 
-Dopo aver preparato Raspberry Pi OS Lite 64-bit con SSH ed Ethernet, collegarsi al Pi ed eseguire:
+Dopo aver preparato Raspberry Pi OS 64-bit, anche nell'edizione completa con desktop, abilitare SSH, collegarsi al Pi ed eseguire:
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/stefano5885/RaspberryTV/main/scripts/bootstrap.sh | sudo sh
