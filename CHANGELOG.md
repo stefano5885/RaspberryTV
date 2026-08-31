@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.2 - 2026-08-31
+
+- Corretto `203/EXEC`: gli aggiornamenti ripristinano i permessi degli script e systemd usa esplicitamente gli interpreti.
+- Supporto completo ai monitor privi di HDMI-CEC; il kiosk resta indipendente dal bridge telecomando.
+- Splash tecnico RaspberryTV durante l'avvio, installato tramite il supporto ufficiale Raspberry Pi.
+
 ## 0.3.1 - 2026-08-31
 
 - Autoriparazione di proprietario e permessi dei file di stato prima di ogni avvio del servizio web.

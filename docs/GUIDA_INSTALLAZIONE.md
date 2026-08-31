@@ -70,6 +70,8 @@ Durante l'installazione vengono inoltre disabilitati salvaschermo e standby soft
 
 La sessione kiosk non usa il pannello né le icone del desktop Raspberry Pi. Prima del browser viene applicato un wallpaper tecnico “Kiosk non avviato”, che rimane visibile se Brave si chiude e durante i tre secondi precedenti il tentativo automatico di riapertura.
 
+Se disponibile per la release di Raspberry Pi OS installata, il bootstrap configura anche lo splash iniziale fullscreen RaspberryTV con il pacchetto ufficiale `rpi-splash-screen-support`. Un monitor senza HDMI-CEC è supportato: rimangono escluse soltanto le funzioni telecomando e sincronizzazione accensione TV.
+
 Sul Raspberry Pi 3 l'operazione può richiedere 10–20 minuti. Non togliere alimentazione e non chiudere la connessione finché compare “Installazione completata”.
 
 ### Variante più prudente

@@ -11,7 +11,7 @@ User=raspberrytv
 Group=raspberrytv
 WorkingDirectory=/var/lib/raspberrytv
 Environment=HOME=/home/raspberrytv
-ExecStart=/opt/raspberrytv/current/scripts/start-x-kiosk.sh
+ExecStart=/bin/sh /opt/raspberrytv/current/scripts/start-x-kiosk.sh
 Restart=on-failure
 RestartSec=5
 TimeoutStopSec=12

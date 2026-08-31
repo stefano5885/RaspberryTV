@@ -9,6 +9,8 @@ Compilare su Raspberry Pi 3 Model B e sulla TV destinata all'uso.
 - [ ] Con URL valido il kiosk parte automaticamente.
 - [ ] Senza URL appare la dashboard.
 - [ ] Dopo reboot completo torna al kiosk.
+- [ ] Durante il boot compare lo splash RaspberryTV senza testo della console sovrapposto.
+- [ ] Su monitor senza HDMI-CEC il kiosk parte normalmente; solo telecomando e ciclo alimentazione restano indisponibili.
 - [ ] Chiudendo Brave manualmente compare il wallpaper “Kiosk non avviato” senza barra, cestino o icone, poi il browser riparte entro 5 secondi.
 - [ ] Interruzione alimentazione non corrompe configurazione o stato.
 

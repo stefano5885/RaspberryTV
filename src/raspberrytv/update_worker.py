@@ -104,6 +104,10 @@ class ReleaseManager:
         return previous
 
     def _sync_system_files(self, release: Path) -> None:
+        for pattern in ("*.sh", "*.py"):
+            for script in (release / "scripts").glob(pattern):
+                os.chmod(script, 0o755)
+
         for browser in ("brave", "chromium"):
             policy_dir = Path(f"/etc/{browser}/policies/managed")
             policy_dir.mkdir(parents=True, exist_ok=True)
@@ -119,6 +123,11 @@ class ReleaseManager:
         shutil.copy2(release / "scripts" / "raspberrytv-control.py", helper)
         os.chmod(helper, 0o755)
         self._run(["systemctl", "daemon-reload"], timeout=30)
+
+        splash = release / "assets" / "boot-splash.tga"
+        configure_splash = shutil.which("configure-splash")
+        if splash.is_file() and configure_splash:
+            self._run([configure_splash, str(splash)], timeout=300)
 
         manager = subprocess.run(
             ["systemctl", "show", "display-manager.service", "--property=Id", "--value"],

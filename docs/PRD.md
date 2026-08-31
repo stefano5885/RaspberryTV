@@ -92,6 +92,7 @@ Occorre mostrare stabilmente un sito pubblico su una TV senza lasciare tastiera 
 | R20 | Ciclo vita TV via HDMI-CEC | P0 | Uso automatico e durata pannello | Nessun blanking/DPMS a TV accesa; a TV spenta browser chiuso; alla riaccensione kiosk avviato e sorgente HDMI selezionata |
 | R21 | Feedback e sicurezza aggiornamenti | P0 | Operatività remota | Dashboard e TV mostrano manutenzione; file di stato restano leggibili dal servizio; un cambio release termina con reboot automatico |
 | R22 | Desktop kiosk neutro e diagnostico | P1 | Stato comprensibile | Nessuna barra/icona/cestino; wallpaper “Kiosk non avviato” visibile senza browser; crash browser seguito da riapertura automatica |
+| R23 | Monitor senza CEC e splash boot | P1 | Compatibilità installazioni | Kiosk indipendente dal bridge CEC; splash RaspberryTV fullscreen; checkout Git senza bit eseguibili tollerato |
 
 ## 8. User Experience and Flows
 

@@ -20,6 +20,15 @@ sudo chmod 600 /var/lib/raspberrytv/*.json
 sudo systemctl restart raspberrytv-web raspberrytv-kiosk raspberrytv-cec
 ```
 
+Se `raspberrytv-kiosk` termina con `status=203/EXEC` e `Permission denied`, la release è stata estratta da Git senza bit eseguibili. Riparazione immediata:
+
+```bash
+sudo find /opt/raspberrytv/current/scripts -maxdepth 1 -type f \( -name '*.sh' -o -name '*.py' \) -exec chmod 755 {} +
+sudo systemctl restart raspberrytv-kiosk
+```
+
+La correzione permanente è inclusa dalla release `0.3.2`.
+
 I log sono limitati da journald a 100 MB persistenti e 14 giorni.
 
 ## La UI LAN non si apre

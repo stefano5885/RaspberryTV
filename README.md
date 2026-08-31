@@ -13,6 +13,7 @@ Kiosk web minimale per Raspberry Pi 3 Model B, controllato dal telecomando TV vi
 - `libCEC` + tastiera virtuale `uinput` per controllare anche siti esterni.
 - Gestione energia HDMI-CEC: nessun standby video durante l'uso, browser chiuso a TV spenta e sorgente riattivata alla riaccensione.
 - Sessione grafica essenziale senza barra o icone, con wallpaper diagnostico visibile quando Brave non è avviato.
+- Splash iniziale RaspberryTV e funzionamento kiosk anche con monitor privi di HDMI-CEC.
 - Telemetria locale di CPU, temperatura e RAM.
 - Schermata tecnica di avvio con apertura automatica del sito configurato.
 - Tag Git SemVer, release separate, attivazione con symlink e rollback.

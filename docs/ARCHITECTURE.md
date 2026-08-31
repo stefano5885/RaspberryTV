@@ -26,6 +26,10 @@ Xorg viene avviato con screen blanking e DPMS disabilitati; anche `xset` riaffer
 
 Openbox non avvia pannelli, file manager desktop, cestino o icone. `feh` applica il wallpaper diagnostico incluso nella release prima di Brave. Se il browser termina inaspettatamente, lo sfondo resta visibile e lo script tenta di riaprire Brave dopo tre secondi; quando lo spegnimento arriva dal CEC, systemd arresta invece l'intera sessione.
 
+Gli script della sessione sono richiamati tramite `/bin/sh` e Python espliciti, quindi un checkout Git che perda il bit eseguibile non può più produrre `203/EXEC`. L'updater ripristina comunque mode `0755` come ulteriore protezione.
+
+Il bootstrap installa, quando disponibile, `rpi-splash-screen-support` e configura `assets/boot-splash.tga` come immagine iniziale fullscreen. Il file rispetta i vincoli Raspberry Pi: 1920×1080, 24 bit, 224 colori, TGA non compresso.
+
 Il profilo Brave viene riconfigurato prima di ogni avvio: adblock attivo, filtro cosmetico first-party in modalità `BLOCK` (Aggressive), P3A e usage ping disabilitati. Le policy amministrative impediscono la ricomparsa dei relativi banner.
 
 ### CEC e focus
@@ -43,6 +47,8 @@ Il profilo Brave viene riconfigurato prima di ogni avvio: adblock attivo, filtro
 La scelta Tab/Shift+Tab è deliberata: funziona sugli elementi semanticamente focusabili anche nei siti esterni, dove non è possibile iniettare JavaScript. Il comportamento esatto di Home/Back dipende dai codici inviati dalla TV.
 
 Lo stesso client CEC interroga ogni 15 secondi lo stato di alimentazione del televisore. In standby arresta `raspberrytv-kiosk.service`, chiudendo Brave e Xorg ma lasciando acceso il Raspberry e il listener CEC. Quando rileva la riaccensione, riavvia il kiosk e invia `Active Source` per selezionare l'ingresso HDMI del Raspberry. Il cambio sorgente avviene una sola volta per ogni transizione verso acceso.
+
+Su un monitor senza HDMI-CEC il bridge può restare in attesa o essere disabilitato: web e kiosk non dipendono dal servizio CEC.
 
 ### Networking
 

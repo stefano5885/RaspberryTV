@@ -16,6 +16,11 @@ apt-get install -y --no-install-recommends \
     ca-certificates curl git openssh-client python3 sudo network-manager avahi-daemon \
     cec-utils xserver-xorg-core xserver-xorg-legacy x11-xserver-utils xinit openbox unclutter feh
 
+if ! dpkg-query -W -f='${Status}' rpi-splash-screen-support 2>/dev/null | grep -q 'install ok installed'; then
+    apt-get install -y --no-install-recommends rpi-splash-screen-support || \
+        echo "Splash iniziale non disponibile su questa versione di Raspberry Pi OS" >&2
+fi
+
 if [ "$(dpkg --print-architecture)" = "arm64" ]; then
     curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg \
         https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
@@ -78,6 +83,11 @@ install -m 0644 "$source_dir/systemd/raspberrytv-web.service" /etc/systemd/syste
 install -m 0644 "$source_dir/systemd/raspberrytv-kiosk.service" /etc/systemd/system/
 install -m 0644 "$source_dir/systemd/raspberrytv-cec.service" /etc/systemd/system/
 install -m 0644 "$source_dir/systemd/raspberrytv-update.service" /etc/systemd/system/
+
+if command -v configure-splash >/dev/null 2>&1 && [ -f "$release_dir/assets/boot-splash.tga" ]; then
+    configure-splash "$release_dir/assets/boot-splash.tga" || \
+        echo "Configurazione splash non riuscita; il kiosk resta comunque operativo" >&2
+fi
 
 printf '%s\n' 'uinput' > /etc/modules-load.d/raspberrytv.conf
 modprobe uinput || true

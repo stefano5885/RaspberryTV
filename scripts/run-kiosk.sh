@@ -13,7 +13,7 @@ sleep 1
 if command -v feh >/dev/null 2>&1; then
     feh --no-fehbg --bg-fill /opt/raspberrytv/current/assets/kiosk-offline.png || true
 fi
-/opt/raspberrytv/current/scripts/configure-browser-profile.py
+/usr/bin/python3 /opt/raspberrytv/current/scripts/configure-browser-profile.py
 
 browser=""
 for candidate in brave-browser chromium-browser chromium; do
