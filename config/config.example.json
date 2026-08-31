@@ -1,0 +1,9 @@
+{
+  "bind_host": "0.0.0.0",
+  "port": 8080,
+  "repository_url": "https://github.com/stefano5885/RaspberryTV.git",
+  "telegram_chat_id": "",
+  "telegram_poll_minutes": 0,
+  "telegram_topic_id": "",
+  "url": ""
+}

@@ -1,0 +1,19 @@
+[Unit]
+Description=RaspberryTV X11 browser kiosk
+After=raspberrytv-web.service systemd-user-sessions.service
+Requires=raspberrytv-web.service
+Conflicts=getty@tty7.service
+
+[Service]
+Type=simple
+User=raspberrytv
+Group=raspberrytv
+WorkingDirectory=/var/lib/raspberrytv
+Environment=HOME=/home/raspberrytv
+ExecStart=/opt/raspberrytv/current/scripts/start-x-kiosk.sh
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=12
+
+[Install]
+WantedBy=graphical.target

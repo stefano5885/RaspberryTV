@@ -1,0 +1,20 @@
+[Unit]
+Description=RaspberryTV HDMI-CEC input bridge
+After=raspberrytv-kiosk.service
+
+[Service]
+Type=simple
+Environment=PYTHONPATH=/opt/raspberrytv/current/src
+ExecStart=/usr/bin/python3 -m raspberrytv.cec_bridge
+Restart=on-failure
+RestartSec=5
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+DeviceAllow=/dev/uinput rw
+DeviceAllow=/dev/vchiq rw
+DeviceAllow=/dev/cec0 rw
+ReadWritePaths=/var/lib/raspberrytv
+
+[Install]
+WantedBy=multi-user.target

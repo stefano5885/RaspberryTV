@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RaspberryTV</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="/static/app.js" defer></script>
+</head>
+<body>
+  <header>
+    <div>
+      <p class="eyebrow">KIOSK CONTROL</p>
+      <h1>RaspberryTV</h1>
+    </div>
+    <div class="status-pill" id="overall-status">Caricamento…</div>
+  </header>
+
+  <main>
+    <section class="hero panel">
+      <div>
+        <p class="label">URL attivo</p>
+        <p class="current-url" id="current-url">—</p>
+      </div>
+      <button class="primary" data-action="open-site">Apri sito</button>
+    </section>
+
+    <section class="cards" aria-label="Stato sistema">
+      <article class="panel metric"><span>Ethernet</span><strong id="ethernet">—</strong></article>
+      <article class="panel metric"><span>Wi-Fi</span><strong id="wifi">—</strong></article>
+      <article class="panel metric"><span>Telegram</span><strong id="telegram">—</strong></article>
+      <article class="panel metric"><span>Versione</span><strong id="version">—</strong></article>
+    </section>
+
+    <section class="layout">
+      <article class="panel">
+        <h2>Contenuto</h2>
+        <form id="url-form">
+          <label for="url">Indirizzo HTTP/HTTPS</label>
+          <div class="form-row">
+            <input id="url" name="url" type="url" placeholder="https://example.com" required>
+            <button type="submit">Salva URL</button>
+          </div>
+        </form>
+        <button data-action="telegram-refresh">Aggiorna URL da Telegram</button>
+      </article>
+
+      <article class="panel">
+        <h2>Wi-Fi</h2>
+        <form id="wifi-form">
+          <label for="ssid">Nome rete</label>
+          <input id="ssid" name="ssid" autocomplete="off" maxlength="32" required>
+          <label for="wifi-password">Password</label>
+          <input id="wifi-password" name="password" type="password" minlength="8" maxlength="63" required>
+          <button type="submit">Connetti Wi-Fi</button>
+        </form>
+      </article>
+
+      <article class="panel">
+        <h2>Telegram</h2>
+        <form id="telegram-form">
+          <label for="bot-token">Bot token <small>(vuoto per non cambiarlo)</small></label>
+          <input id="bot-token" name="token" type="password" autocomplete="new-password">
+          <label for="chat-id">Chat ID</label>
+          <input id="chat-id" name="chat_id" required>
+          <label for="topic-id">Topic ID <small>(opzionale)</small></label>
+          <input id="topic-id" name="topic_id">
+          <button type="submit">Salva Telegram</button>
+        </form>
+      </article>
+
+      <article class="panel">
+        <h2>Aggiornamenti</h2>
+        <form id="repository-form">
+          <label for="repository-url">Repository Git</label>
+          <input id="repository-url" name="repository_url" placeholder="https://… oppure git@…" required>
+          <button type="submit">Salva repository</button>
+        </form>
+        <p id="update-summary">Ultima verifica non eseguita.</p>
+        <div class="button-row">
+          <button data-action="update-check">Controlla</button>
+          <button class="primary" data-action="update-apply" disabled>Aggiorna applicazione</button>
+          <button data-action="rollback" disabled>Rollback</button>
+        </div>
+      </article>
+    </section>
+
+    <section class="panel system-actions">
+      <h2>Sistema</h2>
+      <div class="button-row">
+        <button data-action="refresh">Aggiorna stato</button>
+        <button class="danger" data-action="reboot">Riavvia Raspberry Pi</button>
+      </div>
+    </section>
+  </main>
+
+  <div id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

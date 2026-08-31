@@ -1,0 +1,14 @@
+{
+  "AutofillAddressEnabled": false,
+  "AutofillCreditCardEnabled": false,
+  "BraveAIChatEnabled": false,
+  "BraveRewardsDisabled": true,
+  "BraveWalletDisabled": true,
+  "BrowserSignin": 0,
+  "DefaultNotificationsSetting": 2,
+  "DefaultPopupsSetting": 2,
+  "MetricsReportingEnabled": false,
+  "PasswordManagerEnabled": false,
+  "PromotionalTabsEnabled": false,
+  "TorDisabled": true
+}

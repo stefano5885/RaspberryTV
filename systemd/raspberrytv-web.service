@@ -1,0 +1,21 @@
+[Unit]
+Description=RaspberryTV local web application
+After=network.target
+
+[Service]
+Type=simple
+User=raspberrytv
+Group=raspberrytv
+Environment=PYTHONPATH=/opt/raspberrytv/current/src
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/usr/bin/python3 -m raspberrytv
+Restart=on-failure
+RestartSec=3
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/etc/raspberrytv /var/lib/raspberrytv
+RestrictSUIDSGID=false
+
+[Install]
+WantedBy=multi-user.target

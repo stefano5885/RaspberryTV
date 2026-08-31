@@ -1,0 +1,13 @@
+[Unit]
+Description=RaspberryTV application updater
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+Environment=PYTHONPATH=/opt/raspberrytv/current/src
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/usr/bin/python3 -m raspberrytv.update_worker
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/opt/raspberrytv /etc/raspberrytv /var/lib/raspberrytv
