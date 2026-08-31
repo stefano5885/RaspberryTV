@@ -28,9 +28,9 @@ Openbox non avvia pannelli, file manager desktop, cestino o icone. `feh` applica
 
 Gli script della sessione sono richiamati tramite `/bin/sh` e Python espliciti, quindi un checkout Git che perda il bit eseguibile non può più produrre `203/EXEC`. L'updater ripristina comunque mode `0755` come ulteriore protezione.
 
-Il bootstrap installa, quando disponibile, `rpi-splash-screen-support` e configura `assets/boot-splash.tga` come immagine iniziale fullscreen. Il file rispetta i vincoli Raspberry Pi: 1920×1080, 24 bit, 224 colori, TGA non compresso.
+Il bootstrap installa, quando disponibile, `rpi-splash-screen-support` e configura `assets/boot-splash.tga` come immagine iniziale fullscreen. Il file rispetta i vincoli Raspberry Pi: 1920×1080, 24 bit, 224 colori, TGA non compresso. `configure-boot-splash.sh` elimina inoltre il successivo splash Plymouth standard e il riquadro arcobaleno del firmware; il confronto con il logo già installato evita di rigenerare inutilmente l'initramfs.
 
-Il profilo Brave viene riconfigurato prima di ogni avvio: adblock attivo, filtro cosmetico first-party in modalità `BLOCK` (Aggressive), P3A e usage ping disabilitati. Le policy amministrative impediscono la ricomparsa dei relativi banner.
+Il profilo Brave viene riconfigurato prima di ogni avvio: adblock attivo, filtro cosmetico first-party in modalità `BLOCK` (Aggressive), P3A e usage ping disabilitati. Le policy amministrative impediscono la ricomparsa dei relativi banner. Il solo interstitial `BraveDomainBlock` è disattivato: il documento principale può caricarsi senza richiedere “Proceed”, mentre le richieste pubblicitarie e di tracciamento della pagina restano filtrate dagli Shields.
 
 ### CEC e focus
 

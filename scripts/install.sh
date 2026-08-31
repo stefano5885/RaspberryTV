@@ -84,10 +84,8 @@ install -m 0644 "$source_dir/systemd/raspberrytv-kiosk.service" /etc/systemd/sys
 install -m 0644 "$source_dir/systemd/raspberrytv-cec.service" /etc/systemd/system/
 install -m 0644 "$source_dir/systemd/raspberrytv-update.service" /etc/systemd/system/
 
-if command -v configure-splash >/dev/null 2>&1 && [ -f "$release_dir/assets/boot-splash.tga" ]; then
-    configure-splash "$release_dir/assets/boot-splash.tga" || \
-        echo "Configurazione splash non riuscita; il kiosk resta comunque operativo" >&2
-fi
+/bin/sh "$release_dir/scripts/configure-boot-splash.sh" "$release_dir/assets/boot-splash.tga" || \
+    echo "Configurazione splash non riuscita; il kiosk resta comunque operativo" >&2
 
 printf '%s\n' 'uinput' > /etc/modules-load.d/raspberrytv.conf
 modprobe uinput || true

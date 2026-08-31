@@ -11,9 +11,11 @@ User=raspberrytv
 Group=raspberrytv
 WorkingDirectory=/var/lib/raspberrytv
 Environment=HOME=/home/raspberrytv
+ExecStartPre=+/bin/sh /opt/raspberrytv/current/scripts/configure-boot-splash.sh
 ExecStart=/bin/sh /opt/raspberrytv/current/scripts/start-x-kiosk.sh
 Restart=on-failure
 RestartSec=5
+TimeoutStartSec=360
 TimeoutStopSec=12
 
 [Install]

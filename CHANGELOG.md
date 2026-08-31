@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.3 - 2026-08-31
+
+- Eliminato lo splash Plymouth standard che poteva apparire dopo l'immagine RaspberryTV.
+- Disabilitato anche il riquadro arcobaleno del firmware.
+- Configurazione dello splash resa idempotente e applicata automaticamente anche passando dalla dashboard.
+- Rimossa la pagina intermedia “This site may attempt to track you across other sites”: il documento principale prosegue, mentre Shields resta Aggressivo e continua a bloccare tracker e pubblicità incorporati.
+
 ## 0.3.2 - 2026-08-31
 
 - Corretto `203/EXEC`: gli aggiornamenti ripristinano i permessi degli script e systemd usa esplicitamente gli interpreti.

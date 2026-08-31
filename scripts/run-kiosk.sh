@@ -41,7 +41,7 @@ while :; do
         --disable-session-crashed-bubble \
         --disable-infobars \
         --disable-translate \
-        --disable-features=Translate,MediaRouter,OptimizationHints,AutofillServerCommunication \
+        --disable-features=Translate,MediaRouter,OptimizationHints,AutofillServerCommunication,BraveDomainBlock \
         --lang=it-IT \
         --autoplay-policy=no-user-gesture-required \
         --password-store=basic \

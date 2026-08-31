@@ -21,6 +21,20 @@ class DeploymentTests(unittest.TestCase):
         width, height = struct.unpack("<HH", header[12:16])
         self.assertEqual((width, height, header[16]), (1920, 1080, 24))
 
+    def test_kiosk_applies_custom_splash_and_disables_standard_layers(self):
+        unit = (ROOT / "systemd" / "raspberrytv-kiosk.service").read_text(encoding="utf-8")
+        script = (ROOT / "scripts" / "configure-boot-splash.sh").read_text(encoding="utf-8")
+        self.assertIn("ExecStartPre=+/bin/sh /opt/raspberrytv/current/scripts/configure-boot-splash.sh", unit)
+        self.assertIn("configure-splash", script)
+        self.assertIn("do_boot_splash 1", script)
+        self.assertIn("disable_splash=1", script)
+
+    def test_brave_keeps_aggressive_shields_without_domain_interstitial(self):
+        script = (ROOT / "scripts" / "run-kiosk.sh").read_text(encoding="utf-8")
+        policy = (ROOT / "config" / "brave-policy.json").read_text(encoding="utf-8")
+        self.assertIn("BraveDomainBlock", script)
+        self.assertIn('"DefaultBraveAdblockSetting": 2', policy)
+
 
 if __name__ == "__main__":
     unittest.main()

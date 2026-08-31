@@ -124,10 +124,12 @@ class ReleaseManager:
         os.chmod(helper, 0o755)
         self._run(["systemctl", "daemon-reload"], timeout=30)
 
-        splash = release / "assets" / "boot-splash.tga"
-        configure_splash = shutil.which("configure-splash")
-        if splash.is_file() and configure_splash:
-            self._run([configure_splash, str(splash)], timeout=300)
+        splash_configurator = release / "scripts" / "configure-boot-splash.sh"
+        if splash_configurator.is_file():
+            self._run(
+                ["/bin/sh", str(splash_configurator), str(release / "assets" / "boot-splash.tga")],
+                timeout=360,
+            )
 
         manager = subprocess.run(
             ["systemctl", "show", "display-manager.service", "--property=Id", "--value"],

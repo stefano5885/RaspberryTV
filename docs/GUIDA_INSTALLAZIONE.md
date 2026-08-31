@@ -66,11 +66,13 @@ Lo script:
 7. crea i servizi `systemd`;
 8. avvia applicazione web, schermata di caricamento, browser kiosk e bridge CEC.
 
+Brave non interrompe il kiosk con la pagina “This site may attempt to track you across other sites”: l'apertura del documento principale viene consentita automaticamente, ma gli Shields restano su **Aggressivo** e continuano a bloccare le connessioni pubblicitarie e di tracciamento incorporate nella pagina.
+
 Durante l'installazione vengono inoltre disabilitati salvaschermo e standby software dell'uscita video. Il Raspberry resta acceso quando la TV viene spenta: in questo modo può ricevere il successivo evento CEC, riaprire il browser e richiamare automaticamente l'ingresso HDMI corretto.
 
 La sessione kiosk non usa il pannello né le icone del desktop Raspberry Pi. Prima del browser viene applicato un wallpaper tecnico “Kiosk non avviato”, che rimane visibile se Brave si chiude e durante i tre secondi precedenti il tentativo automatico di riapertura.
 
-Se disponibile per la release di Raspberry Pi OS installata, il bootstrap configura anche lo splash iniziale fullscreen RaspberryTV con il pacchetto ufficiale `rpi-splash-screen-support`. Un monitor senza HDMI-CEC è supportato: rimangono escluse soltanto le funzioni telecomando e sincronizzazione accensione TV.
+Se disponibile per la release di Raspberry Pi OS installata, il bootstrap configura anche lo splash iniziale fullscreen RaspberryTV con il pacchetto ufficiale `rpi-splash-screen-support`. Lo splash standard Plymouth e il riquadro arcobaleno del firmware vengono disabilitati, così non ricompaiono dopo l'immagine personalizzata. Un monitor senza HDMI-CEC è supportato: rimangono escluse soltanto le funzioni telecomando e sincronizzazione accensione TV.
 
 Sul Raspberry Pi 3 l'operazione può richiedere 10–20 minuti. Non togliere alimentazione e non chiudere la connessione finché compare “Installazione completata”.
 
@@ -138,6 +140,7 @@ Il dispositivo installa soltanto tag stabili `vMAJOR.MINOR.PATCH`. Se il nuovo s
 - **SSH rifiutato:** controllare che SSH sia stato abilitato in Raspberry Pi Imager.
 - **Errore architettura:** rifare la SD scegliendo Raspberry Pi OS **64-bit**.
 - **Schermo nero con cursore:** rilanciare il bootstrap per installare la release correttiva più recente; il desktop completo deve essere disabilitato in favore della sessione kiosk.
+- **Compare ancora lo splash Raspberry Pi standard:** installare almeno la versione 0.3.3 dalla dashboard e riavviare; la correzione viene applicata automaticamente all'avvio del kiosk.
 - **Installazione interrotta:** rilanciare lo stesso comando; lo script è progettato per essere ripetibile.
 - **TV nera:** consultare [Troubleshooting](TROUBLESHOOTING.md) e i log del servizio kiosk.
 - **Telecomando non funziona:** abilitare HDMI-CEC nelle impostazioni della TV e controllare `raspberrytv-cec`.
