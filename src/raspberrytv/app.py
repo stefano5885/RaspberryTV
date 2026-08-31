@@ -28,7 +28,10 @@ ASSET_ROOT = Path(__file__).with_name("web")
 class Application:
     def __init__(self, store: ConfigStore | None = None):
         self.store = store or ConfigStore()
-        update = self.store.update_file.read()
+        try:
+            update = self.store.update_file.read()
+        except RuntimeError:
+            update = {}
         if update.get("status") == "rebooting":
             self.store.update_file.write({
                 **update,
@@ -40,13 +43,22 @@ class Application:
         self.updates = UpdateInspector()
 
     def status(self) -> dict[str, Any]:
-        release = self.store.release_file.read()
+        try:
+            release = self.store.release_file.read()
+        except RuntimeError as exc:
+            LOGGER.warning("Stato release non leggibile: %s", exc)
+            release = {}
+        try:
+            update = self.store.update_file.read()
+        except RuntimeError as exc:
+            LOGGER.warning("Stato aggiornamento non leggibile: %s", exc)
+            update = {"status": "unavailable", "message": "Permessi dello stato da riparare"}
         return {
             "hostname": socket.gethostname(),
             "version": __version__,
             "config": self.store.public_config(),
             "state": self.store.state_file.read(),
-            "update": self.store.update_file.read(),
+            "update": update,
             "release": {
                 "active": Path(str(release.get("active_release", ""))).name,
                 "previous": Path(str(release.get("previous_release", ""))).name,

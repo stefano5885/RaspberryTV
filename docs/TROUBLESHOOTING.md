@@ -10,7 +10,15 @@ nmcli device status
 echo scan | cec-client -s -d 1
 ```
 
-Se dopo l'aggiornamento `0.2.0` il portale segnala che non può leggere `release-state.json`, rilanciare il bootstrap più recente. L'installer ripara proprietario e permessi dei file JSON in `/var/lib/raspberrytv`; URL, Wi-Fi e configurazione Telegram non vengono cancellati.
+Se dopo un aggiornamento il portale segnala che non può leggere `release-state.json`, installare la release `0.3.1` o successiva. Il servizio web ripara automaticamente proprietario e permessi dei file JSON in `/var/lib/raspberrytv` prima di ogni avvio; URL, Wi-Fi e configurazione Telegram non vengono cancellati.
+
+Riparazione immediata per una `0.3.0` già bloccata:
+
+```bash
+sudo chown raspberrytv:raspberrytv /var/lib/raspberrytv/*.json
+sudo chmod 600 /var/lib/raspberrytv/*.json
+sudo systemctl restart raspberrytv-web raspberrytv-kiosk raspberrytv-cec
+```
 
 I log sono limitati da journald a 100 MB persistenti e 14 giorni.
 

@@ -62,11 +62,8 @@ if [ ! -f /etc/raspberrytv/secrets.json ]; then
     chmod 0600 /etc/raspberrytv/secrets.json
 fi
 
-# Le release 0.2.0 potevano lasciare questi file a root dopo un update.
-# Il backend deve poterli leggere e aggiornare con il proprio utente limitato.
-find /var/lib/raspberrytv -maxdepth 1 -type f -name '*.json' \
-    -exec chown raspberrytv:raspberrytv {} + \
-    -exec chmod 0600 {} +
+# Le release precedenti potevano lasciare questi file a root dopo un update.
+/bin/sh "$source_dir/scripts/repair-state-permissions.sh"
 
 install -o root -g root -m 0755 "$source_dir/scripts/raspberrytv-control.py" /usr/local/sbin/raspberrytv-control
 printf '%s\n' 'raspberrytv ALL=(root) NOPASSWD: /usr/local/sbin/raspberrytv-control *' > /etc/sudoers.d/raspberrytv

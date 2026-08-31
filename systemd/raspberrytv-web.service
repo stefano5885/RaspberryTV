@@ -8,6 +8,7 @@ User=raspberrytv
 Group=raspberrytv
 Environment=PYTHONPATH=/opt/raspberrytv/current/src
 Environment=PYTHONUNBUFFERED=1
+ExecStartPre=+/bin/sh /opt/raspberrytv/current/scripts/repair-state-permissions.sh
 ExecStart=/usr/bin/python3 -m raspberrytv
 Restart=on-failure
 RestartSec=3

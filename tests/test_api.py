@@ -3,6 +3,7 @@ import tempfile
 import threading
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 
@@ -56,6 +57,16 @@ class ApiTests(unittest.TestCase):
             self.call("/api/config/url", "POST", {"url": "https://example.com"}, {"Origin": "http://evil.invalid"})
         self.assertEqual(caught.exception.code, 403)
         caught.exception.close()
+
+    def test_status_survives_unreadable_update_metadata(self):
+        with (
+            patch.object(self.store.release_file, "read", side_effect=RuntimeError("permission denied")),
+            patch.object(self.store.update_file, "read", side_effect=RuntimeError("permission denied")),
+        ):
+            status, payload = self.call("/api/status")
+        self.assertEqual(status, 200)
+        self.assertEqual(payload["update"]["status"], "unavailable")
+        self.assertEqual(payload["release"]["active"], "")
 
 
 if __name__ == "__main__":

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.1 - 2026-08-31
+
+- Autoriparazione di proprietario e permessi dei file di stato prima di ogni avvio del servizio web.
+- Dashboard resistente a un file `release-state.json` o `update-status.json` temporaneamente non leggibile.
+- Ripristino automatico del kiosk dopo la migrazione da una release che aveva scritto lo stato come root.
+
 ## 0.3.0 - 2026-08-31
 
 - Wallpaper tecnico di fallback “Kiosk non avviato”, installato nella sessione Openbox priva di barra, cestino e icone.
