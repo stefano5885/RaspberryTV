@@ -54,6 +54,7 @@ Compilare su Raspberry Pi 3 Model B e sulla TV destinata all'uso.
 - [ ] Back torna alla pagina precedente.
 - [ ] Home/Root menu torna alla dashboard.
 - [ ] In modalità Puntatore le frecce muovono il mouse nelle quattro direzioni e OK esegue il clic.
+- [ ] Il cursore ricompare al movimento e si nasconde dopo 0,5 secondi senza input.
 - [ ] Tornando a Focus, le frecce riprendono la navigazione Tab/Shift+Tab senza riavvio.
 - [ ] Rosso, verde, giallo e blu eseguono le quattro azioni configurate; eventuali nomi F1–F4 specifici vengono appresi dalla dashboard.
 - [ ] Comportamento verificato dopo spegnimento/riaccensione TV.

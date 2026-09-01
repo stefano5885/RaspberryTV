@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.6.1 - 2026-09-01
+
+- Corretto il puntatore invisibile: Xorg non forza più il cursore sempre nascosto.
+- Il cursore viene nascosto dopo 0,5 secondi di inattività e ricompare quando il telecomando lo muove.
+
 ## 0.6.0 - 2026-09-01
 
 - Corretto il cambio Focus/Puntatore con configurazioni CEC provenienti dalle release precedenti.

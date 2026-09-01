@@ -15,6 +15,12 @@ class DeploymentTests(unittest.TestCase):
         self.assertIn("xinit /bin/sh ", start_x)
         self.assertIn("/usr/bin/python3 ", run_kiosk)
 
+    def test_pointer_cursor_is_visible_while_moving(self):
+        start_x = (ROOT / "scripts" / "start-x-kiosk.sh").read_text(encoding="utf-8")
+        run_kiosk = (ROOT / "scripts" / "run-kiosk.sh").read_text(encoding="utf-8")
+        self.assertNotIn("-nocursor", start_x)
+        self.assertIn("unclutter -idle 0.5", run_kiosk)
+
     def test_boot_splash_has_raspberry_pi_kernel_format(self):
         header = (ROOT / "assets" / "boot-splash.tga").read_bytes()[:18]
         self.assertEqual(header[2], 2)  # Uncompressed true-colour TGA.

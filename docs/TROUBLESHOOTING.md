@@ -67,6 +67,8 @@ I log sono limitati da journald a 100 MB persistenti e 14 giorni.
 
 In modalità **Focus**, Su/Sinistra producono Shift+Tab e Giù/Destra producono Tab: l'ordine dipende dal DOM del sito. Se la pagina non è ben navigabile da tastiera, selezionare **Puntatore** nel pannello CEC; le frecce muoveranno il mouse e OK farà clic. La modifica è immediata.
 
+Se il mouse si muove ma il cursore resta invisibile, installare la release `v0.6.1` o successiva. Il cursore viene nascosto automaticamente dopo 0,5 secondi di inattività, ma deve ricomparire alla prima pressione di una freccia.
+
 Se un tasto colorato non esegue l'azione prevista, premerlo e leggere **Ultimo segnale**. HDMI-CEC usa normalmente F1=blu, F2=rosso, F3=verde e F4=giallo, ma il produttore può inviare un nome diverso: usare **Associa ultimo** sulla riga del colore fisico e salvare.
 
 ## Temperatura o throttling anomali
