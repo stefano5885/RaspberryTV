@@ -66,13 +66,15 @@ class DeploymentTests(unittest.TestCase):
     def test_dashboard_can_open_allowlisted_browser_diagnostics(self):
         html = (ROOT / "src" / "raspberrytv" / "web" / "index.html").read_text(encoding="utf-8")
         javascript = (ROOT / "src" / "raspberrytv" / "web" / "app.js").read_text(encoding="utf-8")
-        helper = (ROOT / "scripts" / "raspberrytv-control.py").read_text(encoding="utf-8")
+        worker = (ROOT / "scripts" / "browser-diagnostics-worker.py").read_text(encoding="utf-8")
+        launcher = (ROOT / "scripts" / "run-kiosk.sh").read_text(encoding="utf-8")
         self.assertIn('data-action="browser-gpu"', html)
         self.assertIn('data-action="browser-media"', html)
         self.assertIn('data-action="browser-version"', html)
         self.assertIn('"/api/browser/diagnostics"', javascript)
-        self.assertIn('{"gpu", "media-internals", "version"}', helper)
-        self.assertIn('"--new-tab"', helper)
+        self.assertIn('{"gpu", "media-internals", "version"}', worker)
+        self.assertIn('"--new-tab"', worker)
+        self.assertIn("browser-diagnostics-worker.py", launcher)
 
 
 if __name__ == "__main__":

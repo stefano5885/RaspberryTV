@@ -88,7 +88,7 @@ cat /sys/class/thermal/thermal_zone0/temp
 
 Dalla dashboard LAN usare **Test Brave sul monitor → Apri GPU Report**. “Hardware accelerated” conferma la GPU per quella funzione; “Software only” o “Disabled” indica il percorso CPU. Per la decodifica video, lasciare un video in riproduzione e aprire **Media Internals** dalla LAN: `GpuVideoDecoder` è hardware, `FFmpegVideoDecoder` è software.
 
-Se il comando non apre la scheda, verificare che il kiosk sia attivo e leggere `journalctl -u raspberrytv-web -u raspberrytv-kiosk`. Il comando si collega al profilo del browser già avviato e non avvia una seconda sessione indipendente. Usare **Torna al sito** per ripristinare la pagina normale.
+Se compare “Comando di sistema non disponibile”, installare `v0.6.2` o successiva: le release precedenti attendevano erroneamente la conclusione del processo Brave fino al timeout HTTP. Se la nuova versione non apre la scheda, verificare che il kiosk sia attivo e leggere `journalctl -u raspberrytv-kiosk`. Il worker si collega al profilo del browser già avviato e non crea una sessione grafica indipendente. Usare **Torna al sito** per ripristinare la pagina normale.
 
 ## Telegram non trova messaggi
 

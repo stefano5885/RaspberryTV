@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.6.2 - 2026-09-01
+
+- Corretto “Comando di sistema non disponibile” aprendo i report Brave dalla stessa sessione del kiosk.
+- La dashboard accoda la richiesta senza attendere l'avvio della scheda, evitando il timeout HTTP.
+- Nuovo worker locale con allowlist stretta per GPU Report, Media Internals e Version Info.
+
 ## 0.6.1 - 2026-09-01
 
 - Corretto il puntatore invisibile: Xorg non forza più il cursore sempre nascosto.

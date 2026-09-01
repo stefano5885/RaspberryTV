@@ -33,7 +33,7 @@ class SystemController:
     def open_browser_diagnostic(self, test: str) -> None:
         if test not in {"gpu", "media-internals", "version"}:
             raise ValueError("Test browser non valido")
-        self._invoke(f"browser-diagnostic-{test}")
+        JsonFile(self.state_dir / "browser-diagnostic-request.json", {}).write({"test": test})
 
     def request_wifi(self, ssid: str, password: str) -> None:
         ssid = ssid.strip()

@@ -28,6 +28,10 @@ if [ -z "$browser" ]; then
     exit 1
 fi
 
+/usr/bin/python3 /opt/raspberrytv/current/scripts/browser-diagnostics-worker.py "$browser" &
+diagnostics_worker=$!
+trap 'kill "$diagnostics_worker" 2>/dev/null || true' EXIT INT TERM
+
 loading_page="file:///opt/raspberrytv/current/src/raspberrytv/web/loading.html"
 
 while :; do

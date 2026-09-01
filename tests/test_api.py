@@ -89,11 +89,11 @@ class ApiTests(unittest.TestCase):
         self.assertEqual(cleared["events"], [])
 
     def test_browser_diagnostics_are_allowlisted(self):
-        with patch.object(self.app.system, "_invoke") as invoke:
-            status, payload = self.call("/api/browser/diagnostics", "POST", {"test": "gpu"})
+        status, payload = self.call("/api/browser/diagnostics", "POST", {"test": "gpu"})
         self.assertEqual(status, 200)
         self.assertEqual(payload["test"], "gpu")
-        invoke.assert_called_once_with("browser-diagnostic-gpu")
+        request_file = self.store.state_dir / "browser-diagnostic-request.json"
+        self.assertEqual(json.loads(request_file.read_text(encoding="utf-8"))["test"], "gpu")
 
         with self.assertRaises(HTTPError) as caught:
             self.call("/api/browser/diagnostics", "POST", {"test": "flags"})
