@@ -51,6 +51,10 @@ Compilare su Raspberry Pi 3 Model B e sulla TV destinata all'uso.
 - [ ] Home/Root menu torna alla dashboard.
 - [ ] Comportamento verificato dopo spegnimento/riaccensione TV.
 - [ ] Eventuali codici specifici della TV sono documentati.
+- [ ] Dashboard CEC passa a “In ascolto” e mostra ogni tasto entro due secondi.
+- [ ] Un tasto sconosciuto compare come “non associato” e può essere mappato con “Associa ultimo”.
+- [ ] “Riavvia bridge” ripristina il listener senza riavviare il Raspberry.
+- [ ] Il registro non supera 100 eventi e non contiene segreti.
 
 ## Telegram
 

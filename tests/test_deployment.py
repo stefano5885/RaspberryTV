@@ -38,6 +38,17 @@ class DeploymentTests(unittest.TestCase):
         self.assertIn("BraveDomainBlock", script)
         self.assertIn('"DefaultBraveAdblockSetting": 2', policy)
 
+    def test_cec_client_enables_debug_needed_for_decoded_keys(self):
+        bridge = (ROOT / "src" / "raspberrytv" / "cec_bridge.py").read_text(encoding="utf-8")
+        self.assertIn('["cec-client", "-d", "31"', bridge)
+
+    def test_cec_dashboard_has_live_log_and_learning_controls(self):
+        html = (ROOT / "src" / "raspberrytv" / "web" / "index.html").read_text(encoding="utf-8")
+        javascript = (ROOT / "src" / "raspberrytv" / "web" / "app.js").read_text(encoding="utf-8")
+        self.assertIn('id="cec-console"', html)
+        self.assertIn('data-cec-assign="activate"', html)
+        self.assertIn('setInterval(() => loadCec().catch(() => {}), 1000)', javascript)
+
 
 if __name__ == "__main__":
     unittest.main()

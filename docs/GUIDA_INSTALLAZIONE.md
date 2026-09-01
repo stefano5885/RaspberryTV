@@ -111,6 +111,8 @@ Nella dashboard:
 5. provare frecce, OK, Back e Home del telecomando;
 6. scollegare Ethernet soltanto dopo aver verificato il Wi-Fi.
 
+La sezione **Telecomando CEC** mostra in tempo quasi reale ciò che il Raspberry riceve. Se un tasto compare come “non associato”, premere **Associa ultimo** accanto all'azione desiderata e poi **Salva mappatura**. Il pulsante **Riavvia bridge** consente di riprovare l'inizializzazione senza riavviare tutto il Raspberry.
+
 Il repository degli aggiornamenti è già impostato su `https://github.com/stefano5885/RaspberryTV.git`.
 
 ## 7. Verificare l'installazione
@@ -143,7 +145,7 @@ Il dispositivo installa soltanto tag stabili `vMAJOR.MINOR.PATCH`. Se il nuovo s
 - **Compare lo splash standard o l'elenco dei servizi `[ OK ]`:** installare almeno la versione 0.3.4 dalla dashboard e riavviare; la correzione viene applicata automaticamente all'avvio del kiosk.
 - **Installazione interrotta:** rilanciare lo stesso comando; lo script è progettato per essere ripetibile.
 - **TV nera:** consultare [Troubleshooting](TROUBLESHOOTING.md) e i log del servizio kiosk.
-- **Telecomando non funziona:** abilitare HDMI-CEC nelle impostazioni della TV e controllare `raspberrytv-cec`.
+- **Telecomando non funziona:** aprire il pannello **Telecomando CEC**. Se non appare alcun tasto, verificare HDMI-CEC sulla TV e l'errore mostrato; se il tasto appare come non associato, mapparlo dalla stessa pagina.
 - **La TV non riapre il kiosk:** controllare che l'avvio automatico dei dispositivi e il cambio sorgente siano consentiti nelle impostazioni CEC della TV; alcuni produttori espongono opzioni separate.
 
 ## 10. Sicurezza

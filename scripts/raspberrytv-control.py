@@ -71,6 +71,8 @@ def main() -> None:
         run(["systemctl", "stop", "raspberrytv-kiosk.service"])
     elif action == "wifi-apply":
         wifi_apply()
+    elif action == "cec-restart":
+        run(["systemctl", "restart", "raspberrytv-cec.service"])
     elif action == "update-start":
         run(["systemctl", "start", "--no-block", "raspberrytv-update.service"])
     elif action == "reboot":

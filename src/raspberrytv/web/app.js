@@ -1,6 +1,16 @@
 const $ = (selector) => document.querySelector(selector);
 let availableTag = "";
 let updateMonitor = 0;
+let lastCecSequence = -1;
+let lastCecKey = "";
+let cecMappingLoaded = false;
+
+const cecStatusLabels = {
+  unknown: "NON RILEVATO",
+  starting: "INIZIALIZZAZIONE",
+  listening: "IN ASCOLTO",
+  retrying: "NUOVO TENTATIVO",
+};
 
 function toast(message, error = false) {
   const node = $("#toast");
@@ -43,6 +53,59 @@ function showUpdate(message) {
   overlay.classList.add("visible");
   overlay.setAttribute("aria-hidden", "false");
   $("#update-overlay-message").textContent = message;
+}
+
+function renderCecEvents(events) {
+  const consoleNode = $("#cec-console");
+  consoleNode.replaceChildren();
+  if (!(events || []).length) {
+    const empty = document.createElement("p");
+    empty.className = "cec-empty";
+    empty.textContent = "In attesa degli eventi del telecomando…";
+    consoleNode.append(empty);
+    return;
+  }
+  for (const event of events) {
+    const row = document.createElement("p");
+    row.className = `cec-event ${event.kind || "info"} ${event.level || "info"}`;
+    const at = document.createElement("time");
+    const date = new Date(event.at);
+    at.textContent = Number.isNaN(date.getTime()) ? "--:--:--" : date.toLocaleTimeString("it-IT", { hour12: false });
+    const kind = document.createElement("b");
+    kind.textContent = event.kind || "evento";
+    const message = document.createElement("span");
+    message.textContent = event.message || "—";
+    row.append(at, kind, message);
+    consoleNode.append(row);
+  }
+  consoleNode.scrollTop = consoleNode.scrollHeight;
+}
+
+async function loadCec() {
+  const data = await request("/api/cec");
+  const status = data.status || "unknown";
+  const label = cecStatusLabels[status] || status.toUpperCase();
+  $("#cec-summary").textContent = label;
+  $("#cec-last-key").textContent = data.last_key ? `ULTIMO: ${data.last_key}` : "NESSUN TASTO";
+  $("#cec-key-readout").textContent = data.last_key || "—";
+  $("#cec-message").textContent = data.message || "Nessun dettaglio disponibile.";
+  lastCecKey = data.last_key || "";
+  const live = $("#cec-live-state").parentElement;
+  live.className = `cec-live ${status}`;
+  $("#cec-live-state").textContent = label;
+  $("#cec-telemetry-card").classList.toggle("offline", status !== "listening");
+
+  if (Number(data.sequence) !== lastCecSequence) {
+    lastCecSequence = Number(data.sequence);
+    renderCecEvents(data.events);
+  }
+  if (!cecMappingLoaded) {
+    for (const [action, keys] of Object.entries(data.keymap || {})) {
+      const input = document.querySelector(`[data-cec-map="${action}"]`);
+      if (input) input.value = (keys || []).join(", ");
+    }
+    cecMappingLoaded = true;
+  }
 }
 
 async function monitorUpdate() {
@@ -129,13 +192,48 @@ $("#repository-form").addEventListener("submit", async (event) => {
   event.preventDefault();
   try { await submitForm(event.currentTarget, "/api/config/repository"); } catch (error) { toast(error.message, true); }
 });
+$("#cec-form").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const keymap = {};
+  for (const input of event.currentTarget.querySelectorAll("[data-cec-map]")) {
+    keymap[input.dataset.cecMap] = input.value.split(",").map((value) => value.trim()).filter(Boolean);
+  }
+  try {
+    await request("/api/config/cec", { method: "POST", body: JSON.stringify({ keymap }) });
+    toast("Mappatura telecomando salvata");
+  } catch (error) { toast(error.message, true); }
+});
 
 document.addEventListener("click", async (event) => {
+  const assignment = event.target.closest("[data-cec-assign]")?.dataset.cecAssign;
+  if (assignment) {
+    if (!lastCecKey) { toast("Premi prima un tasto sul telecomando", true); return; }
+    const input = document.querySelector(`[data-cec-map="${assignment}"]`);
+    for (const other of document.querySelectorAll("[data-cec-map]")) {
+      if (other === input) continue;
+      other.value = other.value.split(",").map((value) => value.trim()).filter((value) => value && value !== lastCecKey).join(", ");
+    }
+    const keys = input.value.split(",").map((value) => value.trim()).filter(Boolean);
+    if (!keys.includes(lastCecKey)) keys.push(lastCecKey);
+    input.value = keys.join(", ");
+    toast(`Tasto “${lastCecKey}” associato; premi SALVA MAPPATURA`);
+    return;
+  }
   const action = event.target.closest("[data-action]")?.dataset.action;
   if (!action) return;
   try {
     if (action === "refresh") await loadStatus();
     if (action === "open-site") await request("/api/browser/site", { method: "POST", body: "{}" });
+    if (action === "cec-restart") {
+      await request("/api/cec/restart", { method: "POST", body: "{}" });
+      toast("Bridge CEC riavviato");
+      setTimeout(() => loadCec().catch(() => {}), 700);
+    }
+    if (action === "cec-clear") {
+      await request("/api/cec/clear", { method: "POST", body: "{}" });
+      lastCecSequence = -1;
+      await loadCec();
+    }
     if (action === "telegram-refresh") {
       const result = await request("/api/telegram/refresh", { method: "POST", body: "{}" });
       toast(result.message || (result.changed ? "URL aggiornato" : "URL già aggiornato"));
@@ -174,4 +272,6 @@ document.addEventListener("click", async (event) => {
 });
 
 loadStatus().catch((error) => toast(error.message, true));
+loadCec().catch((error) => toast(`Diagnostica CEC: ${error.message}`, true));
 setInterval(() => loadStatus().catch(() => {}), 10000);
+setInterval(() => loadCec().catch(() => {}), 1000);

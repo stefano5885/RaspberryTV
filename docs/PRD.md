@@ -94,6 +94,7 @@ Occorre mostrare stabilmente un sito pubblico su una TV senza lasciare tastiera 
 | R22 | Desktop kiosk neutro e diagnostico | P1 | Stato comprensibile | Nessuna barra/icona/cestino; wallpaper “Kiosk non avviato” visibile senza browser; crash browser seguito da riapertura automatica |
 | R23 | Monitor senza CEC e splash boot | P1 | Compatibilità installazioni | Kiosk indipendente dal bridge CEC; solo splash RaspberryTV fullscreen, senza livelli grafici standard né messaggi systemd `[ OK ]`; checkout Git senza bit eseguibili tollerato |
 | R24 | Navigazione Brave non presidiata | P0 | Continuità kiosk | Nessun interstitial Domain Block richiede “Proceed”; documento principale consentito, tracker e pubblicità incorporati ancora bloccati in modalità Aggressive |
+| R25 | Diagnostica e configurazione CEC | P0 | Collaudo telecomando | Stato ed eventi CEC aggiornati entro 2 s; registro limitato e senza journal completo; ultimo tasto associabile alle azioni dalla dashboard; bridge riavviabile senza reboot |
 
 ## 8. User Experience and Flows
 

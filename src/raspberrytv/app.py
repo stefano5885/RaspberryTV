@@ -14,6 +14,8 @@ from urllib.parse import urlsplit
 
 from . import __version__
 from .config import ConfigStore
+from .cec_diagnostics import CecDiagnostics
+from .cec_keys import normalize_keymap
 from .network import network_status
 from .system_control import SystemController
 from .system_metrics import SystemMetrics
@@ -39,6 +41,7 @@ class Application:
                 "message": "Aggiornamento completato e sistema riavviato",
             })
         self.system = SystemController(self.store.state_dir)
+        self.cec = CecDiagnostics(self.store.state_dir)
         self.metrics = SystemMetrics()
         self.updates = UpdateInspector()
 
@@ -184,6 +187,11 @@ class Handler(BaseHTTPRequestHandler):
                 self._json({"ok": True, "version": __version__}, cors=True)
             elif path == "/api/status":
                 self._json(self.application.status())
+            elif path == "/api/cec":
+                diagnostics = self.application.cec.read()
+                config = self.application.store.config_file.read()
+                diagnostics["keymap"] = normalize_keymap(config.get("cec_keymap"))
+                self._json(diagnostics)
             elif path == "/api/kiosk-target":
                 if self.client_address[0] not in {"127.0.0.1", "::1"}:
                     self._json({"error": "Solo accesso locale"}, HTTPStatus.FORBIDDEN)
@@ -235,6 +243,9 @@ class Handler(BaseHTTPRequestHandler):
             elif path == "/api/config/wifi":
                 self.application.system.request_wifi(str(body.get("ssid", "")), str(body.get("password", "")))
                 self._json({"ok": True, "message": "Configurazione Wi-Fi applicata"})
+            elif path == "/api/config/cec":
+                keymap = self.application.store.set_cec_keymap(body.get("keymap"))
+                self._json({"ok": True, "keymap": keymap})
             elif path == "/api/telegram/refresh":
                 self._json({"ok": True, **self.application.refresh_telegram()})
             elif path == "/api/browser/site":
@@ -245,6 +256,12 @@ class Handler(BaseHTTPRequestHandler):
                 self._json({"ok": True})
             elif path == "/api/system/reboot":
                 self.application.system.reboot()
+                self._json({"ok": True})
+            elif path == "/api/cec/restart":
+                self.application.system.restart_cec()
+                self._json({"ok": True, "message": "Bridge CEC riavviato"})
+            elif path == "/api/cec/clear":
+                self.application.cec.clear()
                 self._json({"ok": True})
             elif path == "/api/update/apply":
                 self.application.system.request_update("update", str(body.get("tag", "")))

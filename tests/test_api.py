@@ -68,6 +68,20 @@ class ApiTests(unittest.TestCase):
         self.assertEqual(payload["update"]["status"], "unavailable")
         self.assertEqual(payload["release"]["active"], "")
 
+    def test_cec_diagnostics_and_mapping_api(self):
+        self.app.cec.record("key", "Tasto select", key="select", action="activate", status="listening")
+        status, payload = self.call("/api/cec")
+        self.assertEqual(status, 200)
+        self.assertEqual(payload["last_key"], "select")
+        keymap = payload["keymap"]
+        keymap["activate"] = ["ok button"]
+        status, saved = self.call("/api/config/cec", "POST", {"keymap": keymap})
+        self.assertEqual(status, 200)
+        self.assertEqual(saved["keymap"]["activate"], ["ok button"])
+        self.call("/api/cec/clear", "POST")
+        _, cleared = self.call("/api/cec")
+        self.assertEqual(cleared["events"], [])
+
 
 if __name__ == "__main__":
     unittest.main()

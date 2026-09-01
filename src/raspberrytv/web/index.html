@@ -57,6 +57,11 @@
         <span class="telemetry-code">APP.01</span><span class="telemetry-label">Release</span>
         <strong id="version">—</strong><i class="signal"></i>
       </article>
+      <article class="telemetry-card" id="cec-telemetry-card">
+        <span class="telemetry-code">I/O.01</span><span class="telemetry-label">HDMI-CEC</span>
+        <strong id="cec-summary">—</strong><i class="signal"></i>
+        <small id="cec-last-key">NESSUN TASTO</small>
+      </article>
     </section>
 
     <section class="modules">
@@ -112,7 +117,56 @@
       </article>
     </section>
 
-    <section class="panel footer-panel" data-module="05">
+    <section class="panel cec-module" data-module="05">
+      <header class="cec-header">
+        <div><span class="section-label">HDMI INPUT BUS</span><h2>Telecomando CEC</h2></div>
+        <div class="cec-live"><i></i><span id="cec-live-state">IN ATTESA</span></div>
+      </header>
+      <div class="cec-layout">
+        <div class="cec-monitor">
+          <div class="cec-readout">
+            <div><span class="section-label">ULTIMO SEGNALE</span><strong id="cec-key-readout">—</strong></div>
+            <p id="cec-message">Il bridge non ha ancora comunicato.</p>
+          </div>
+          <div class="cec-console" id="cec-console" role="log" aria-live="polite">
+            <p class="cec-empty">In attesa degli eventi del telecomando…</p>
+          </div>
+          <div class="button-row">
+            <button class="button button-ghost" data-action="cec-restart">↻ RIAVVIA BRIDGE</button>
+            <button class="button button-ghost" data-action="cec-clear">PULISCI LOG</button>
+          </div>
+        </div>
+        <form id="cec-form" class="cec-mapping">
+          <div class="mapping-intro">
+            <span class="section-label">KEY MAP</span>
+            <p>Premi un tasto sul telecomando, poi usa <b>ASSOCIA ULTIMO</b>. Puoi indicare più nomi separati da virgole.</p>
+          </div>
+          <div class="mapping-row">
+            <label for="cec-focus-next">AVANTI / DESTRA / GIÙ</label>
+            <div class="input-action"><input id="cec-focus-next" data-cec-map="focus_next"><button class="button" type="button" data-cec-assign="focus_next">ASSOCIA ULTIMO</button></div>
+          </div>
+          <div class="mapping-row">
+            <label for="cec-focus-previous">INDIETRO / SINISTRA / SU</label>
+            <div class="input-action"><input id="cec-focus-previous" data-cec-map="focus_previous"><button class="button" type="button" data-cec-assign="focus_previous">ASSOCIA ULTIMO</button></div>
+          </div>
+          <div class="mapping-row">
+            <label for="cec-activate">OK / SELEZIONA</label>
+            <div class="input-action"><input id="cec-activate" data-cec-map="activate"><button class="button" type="button" data-cec-assign="activate">ASSOCIA ULTIMO</button></div>
+          </div>
+          <div class="mapping-row">
+            <label for="cec-back">INDIETRO NEL BROWSER</label>
+            <div class="input-action"><input id="cec-back" data-cec-map="back"><button class="button" type="button" data-cec-assign="back">ASSOCIA ULTIMO</button></div>
+          </div>
+          <div class="mapping-row">
+            <label for="cec-admin">APRI DASHBOARD</label>
+            <div class="input-action"><input id="cec-admin" data-cec-map="admin"><button class="button" type="button" data-cec-assign="admin">ASSOCIA ULTIMO</button></div>
+          </div>
+          <button class="button button-primary" type="submit">SALVA MAPPATURA</button>
+        </form>
+      </div>
+    </section>
+
+    <section class="panel footer-panel" data-module="06">
       <div><span class="section-label">NODE OPERATIONS</span><h2>Controllo sistema</h2></div>
       <div class="button-row">
         <button class="button button-ghost" data-action="refresh">↻ REFRESH TELEMETRIA</button>

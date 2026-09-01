@@ -34,7 +34,7 @@ Il profilo Brave viene riconfigurato prima di ogni avvio: adblock attivo, filtro
 
 ### CEC e focus
 
-`raspberrytv-cec.service` legge `cec-client` e crea `/dev/uinput` una tastiera virtuale:
+`raspberrytv-cec.service` legge `cec-client` con maschera log `31` e crea `/dev/uinput` una tastiera virtuale. Il livello DEBUG è necessario perché libCEC pubblica lì gli eventi decodificati `key pressed`; il traffico grezzo non viene esposto dalla dashboard:
 
 | Telecomando | Evento Linux | Effetto |
 |---|---|---|
@@ -45,6 +45,8 @@ Il profilo Brave viene riconfigurato prima di ogni avvio: adblock attivo, filtro
 | Home / Root menu | riavvio kiosk sulla dashboard | Amministrazione locale |
 
 La scelta Tab/Shift+Tab è deliberata: funziona sugli elementi semanticamente focusabili anche nei siti esterni, dove non è possibile iniettare JavaScript. Il comportamento esatto di Home/Back dipende dai codici inviati dalla TV.
+
+Il bridge mantiene in `/var/lib/raspberrytv/cec-diagnostics.json` un registro strutturato limitato agli ultimi 100 eventi. La dashboard interroga `/api/cec` ogni secondo e mostra stato, tasti ricevuti, azione applicata, transizioni di alimentazione ed errori. Non viene esposto l'intero journal di sistema. La mappatura salvata in `cec_keymap` associa più nomi CEC alle cinque azioni supportate ed è riletta dal bridge a ogni pressione, senza riavvio.
 
 Lo stesso client CEC interroga ogni 15 secondi lo stato di alimentazione del televisore. In standby arresta `raspberrytv-kiosk.service`, chiudendo Brave e Xorg ma lasciando acceso il Raspberry e il listener CEC. Quando rileva la riaccensione, riavvia il kiosk e invia `Active Source` per selezionare l'ingresso HDMI del Raspberry. Il cambio sorgente avviene una sola volta per ogni transizione verso acceso.
 

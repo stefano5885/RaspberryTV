@@ -56,6 +56,8 @@ I log sono limitati da journald a 100 MB persistenti e 14 giorni.
 - Abilitare HDMI-CEC nelle impostazioni TV; il nome commerciale varia.
 - Verificare che `/dev/cec0` o l'adattatore Raspberry Pi siano visibili a `cec-client`.
 - Provare `echo scan | cec-client -s -d 1` e osservare `journalctl -fu raspberrytv-cec` mentre si premono i tasti.
+- Dalla versione 0.4.0 usare prima il pannello **Telecomando CEC** della dashboard: aggiorna ogni secondo e distingue bridge non disponibile, tasto ricevuto e tasto non associato.
+- Per codici specifici della TV, premere il tasto, verificare il nome in **Ultimo segnale**, selezionare **Associa ultimo** sull'azione desiderata e salvare.
 - Alcune TV non inviano Back/Home. Adattare i nomi in `cec_bridge.py` dopo aver osservato l'output reale.
 - Se il Pi non viene rilevato, provare `hdmi_force_hotplug=1` nella configurazione boot, come suggerito dalla documentazione libCEC.
 - Se il pannello va in standby mentre la TV è accesa, verificare nei log del kiosk che `xset` sia disponibile e controllare `xset q` con `DISPLAY=:0`: Screen Saver deve essere disabilitato e DPMS deve risultare Disabled.

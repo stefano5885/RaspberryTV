@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.4.0 - 2026-09-01
+
+- Nuovo pannello HDMI-CEC con stato del bridge e registro strutturato aggiornato ogni secondo.
+- Visualizzazione degli ultimi 100 eventi: tasti, azioni, alimentazione display ed errori dell'adattatore.
+- Mappatura configurabile dei tasti CEC con funzione “Associa ultimo”.
+- Comandi dalla dashboard per riavviare il bridge CEC e pulire il registro diagnostico.
+- Diagnostica disponibile anche quando `/dev/uinput` o l'adattatore CEC non sono accessibili.
+- Corretto il livello di output di `cec-client`: ora include gli eventi DEBUG necessari per ricevere i nomi decodificati dei tasti.
+
 ## 0.3.4 - 2026-08-31
 
 - Ripristinato l'avvio silenzioso dopo la configurazione dello splash personalizzato.

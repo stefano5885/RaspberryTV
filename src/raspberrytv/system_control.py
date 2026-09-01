@@ -57,6 +57,9 @@ class SystemController:
     def reboot(self) -> None:
         self._invoke("reboot")
 
+    def restart_cec(self) -> None:
+        self._invoke("cec-restart")
+
 
 class _StableTag:
     def fullmatch(self, value: str):

@@ -18,6 +18,7 @@ DEFAULT_CONFIG: dict[str, Any] = {
     "telegram_chat_id": "",
     "telegram_topic_id": "",
     "telegram_poll_minutes": 0,
+    "cec_keymap": {},
 }
 
 DEFAULT_STATE: dict[str, Any] = {
@@ -150,3 +151,10 @@ class ConfigStore:
             secrets = self.secrets_file.read()
             secrets["telegram_bot_token"] = token.strip()
             self.secrets_file.write(secrets)
+
+    def set_cec_keymap(self, value: Any) -> dict[str, list[str]]:
+        from .cec_keys import normalize_keymap
+
+        keymap = normalize_keymap(value)
+        self.config_file.update(cec_keymap=keymap)
+        return keymap
