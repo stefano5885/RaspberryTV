@@ -32,6 +32,13 @@ class CecKeymapTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             normalize_color_actions({"red": "shell-command"})
 
+    def test_single_legacy_direction_does_not_create_a_duplicate(self):
+        migrated = normalize_keymap({"focus_next": ["right"], "focus_previous": ["up"]})
+        self.assertEqual(migrated["down"], ["right"])
+        self.assertEqual(migrated["right"], [])
+        self.assertEqual(migrated["up"], ["up"])
+        self.assertEqual(migrated["left"], [])
+
 
 class CecDiagnosticsTests(unittest.TestCase):
     def test_records_a_bounded_structured_log(self):

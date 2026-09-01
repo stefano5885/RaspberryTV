@@ -88,6 +88,25 @@ class ApiTests(unittest.TestCase):
         _, cleared = self.call("/api/cec")
         self.assertEqual(cleared["events"], [])
 
+    def test_browser_diagnostics_are_allowlisted(self):
+        with patch.object(self.app.system, "_invoke") as invoke:
+            status, payload = self.call("/api/browser/diagnostics", "POST", {"test": "gpu"})
+        self.assertEqual(status, 200)
+        self.assertEqual(payload["test"], "gpu")
+        invoke.assert_called_once_with("browser-diagnostic-gpu")
+
+        with self.assertRaises(HTTPError) as caught:
+            self.call("/api/browser/diagnostics", "POST", {"test": "flags"})
+        self.assertEqual(caught.exception.code, 400)
+        caught.exception.close()
+
+    def test_mode_change_does_not_reparse_an_old_keymap(self):
+        self.store.config_file.update(cec_keymap="legacy-invalid-shape")
+        status, payload = self.call("/api/config/cec", "POST", {"mode": "pointer"})
+        self.assertEqual(status, 200)
+        self.assertEqual(payload["input_mode"], "pointer")
+        self.assertEqual(self.store.config_file.read()["cec_keymap"], "legacy-invalid-shape")
+
 
 if __name__ == "__main__":
     unittest.main()

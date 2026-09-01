@@ -57,6 +57,17 @@ class DeploymentTests(unittest.TestCase):
         self.assertIn('id="throttling-detail"', html)
         self.assertIn("throttling.flags", javascript)
 
+    def test_dashboard_can_open_allowlisted_browser_diagnostics(self):
+        html = (ROOT / "src" / "raspberrytv" / "web" / "index.html").read_text(encoding="utf-8")
+        javascript = (ROOT / "src" / "raspberrytv" / "web" / "app.js").read_text(encoding="utf-8")
+        helper = (ROOT / "scripts" / "raspberrytv-control.py").read_text(encoding="utf-8")
+        self.assertIn('data-action="browser-gpu"', html)
+        self.assertIn('data-action="browser-media"', html)
+        self.assertIn('data-action="browser-version"', html)
+        self.assertIn('"/api/browser/diagnostics"', javascript)
+        self.assertIn('{"gpu", "media-internals", "version"}', helper)
+        self.assertIn('"--new-tab"', helper)
+
 
 if __name__ == "__main__":
     unittest.main()

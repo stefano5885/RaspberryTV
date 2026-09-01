@@ -16,6 +16,7 @@ Kiosk web minimale per Raspberry Pi 3 Model B, controllato dal telecomando TV vi
 - Sessione grafica essenziale senza barra o icone, con wallpaper diagnostico visibile quando Brave non è avviato.
 - Splash iniziale RaspberryTV e funzionamento kiosk anche con monitor privi di HDMI-CEC.
 - Telemetria locale di CPU, temperatura, throttling firmware e RAM.
+- Test Brave/Chromium avviabili dalla dashboard per GPU, decoder multimediale e versione.
 - Schermata tecnica di avvio con apertura automatica del sito configurato.
 - Tag Git SemVer, release separate, attivazione con symlink e rollback.
 - `systemd` per avvio e recovery di web, kiosk, CEC e updater one-shot.

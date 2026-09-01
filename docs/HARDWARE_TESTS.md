@@ -33,6 +33,9 @@ Compilare su Raspberry Pi 3 Model B e sulla TV destinata all'uso.
 - [ ] Dashboard mostra valori plausibili di CPU, temperatura e RAM.
 - [ ] Il riquadro Termica mostra `0x0` in condizioni normali e distingue throttling attivo da storico.
 - [ ] Se Brave fallisce, Chromium fallback mantiene le funzioni.
+- [ ] “GPU Report” si apre sul monitor e mostra lo stato di Compositing, Rasterization e WebGL.
+- [ ] Con un video attivo, “Media Internals” mostra il decoder realmente usato senza chiudere prima il sito.
+- [ ] “Torna al sito” chiude il percorso diagnostico e ripristina l'URL configurato.
 - [ ] Il sito reale carica e resta fluido per almeno 4 ore.
 - [ ] Crash forzato del browser viene recuperato da systemd.
 - [ ] Cambio URL e “Apri sito” non richiedono reboot del Pi.

@@ -13,6 +13,7 @@ from pathlib import Path
 STATE_DIR = Path("/var/lib/raspberrytv")
 STATE_FILE = STATE_DIR / "state.json"
 APP_USER = "raspberrytv"
+BROWSER_PROFILE = "/var/lib/raspberrytv/browser-profile"
 
 
 def run(command: list[str]) -> None:
@@ -52,6 +53,23 @@ def wifi_apply() -> None:
         request.unlink(missing_ok=True)
 
 
+def browser_diagnostic(page: str) -> None:
+    allowed = {"gpu", "media-internals", "version"}
+    if page not in allowed:
+        raise SystemExit("Diagnostica browser non consentita")
+    browser = next(
+        (candidate for candidate in ("/usr/bin/brave-browser", "/usr/bin/chromium-browser", "/usr/bin/chromium") if Path(candidate).is_file()),
+        None,
+    )
+    if browser is None:
+        raise SystemExit("Browser non disponibile")
+    scheme = "brave" if browser.endswith("brave-browser") else "chrome"
+    run([
+        "runuser", "-u", APP_USER, "--", "env", "DISPLAY=:0",
+        browser, f"--user-data-dir={BROWSER_PROFILE}", "--new-tab", f"{scheme}://{page}",
+    ])
+
+
 def main() -> None:
     if os.geteuid() != 0 or len(sys.argv) != 2:
         raise SystemExit("Uso riservato a root: raspberrytv-control <azione>")
@@ -64,6 +82,8 @@ def main() -> None:
     elif action == "browser-site":
         write_state(browser_target="site")
         run(["systemctl", "restart", "raspberrytv-kiosk.service"])
+    elif action.startswith("browser-diagnostic-"):
+        browser_diagnostic(action.removeprefix("browser-diagnostic-"))
     elif action == "browser-update":
         run(["systemctl", "try-restart", "raspberrytv-kiosk.service"])
     elif action == "tv-on":

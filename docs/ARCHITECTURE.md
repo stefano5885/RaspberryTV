@@ -32,6 +32,8 @@ Il bootstrap installa, quando disponibile, `rpi-splash-screen-support` e configu
 
 Il profilo Brave viene riconfigurato prima di ogni avvio: adblock attivo, filtro cosmetico first-party in modalità `BLOCK` (Aggressive), P3A e usage ping disabilitati. Le policy amministrative impediscono la ricomparsa dei relativi banner. Il solo interstitial `BraveDomainBlock` è disattivato: il documento principale può caricarsi senza richiedere “Proceed”, mentre le richieste pubblicitarie e di tracciamento della pagina restano filtrate dagli Shields.
 
+La dashboard può chiedere all'helper privilegiato di aprire una nuova scheda diagnostica nell'istanza kiosk già attiva. Sono consentite esclusivamente `gpu`, `media-internals` e `version`; lo schema è scelto dall'helper (`brave://` o `chrome://`) in base al browser installato. Queste pagine non passano dalla validazione dell'URL pubblico, non modificano la configurazione e non rendono disponibile un navigatore interno generico.
+
 ### CEC, focus e puntatore
 
 `raspberrytv-cec.service` legge `cec-client` con maschera log `31` e crea tramite `/dev/uinput` un dispositivo virtuale con tastiera e mouse relativo. Il livello DEBUG è necessario perché libCEC pubblica lì gli eventi decodificati `key pressed`; il traffico grezzo non viene esposto dalla dashboard:

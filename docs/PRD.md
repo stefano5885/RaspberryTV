@@ -98,6 +98,7 @@ Occorre mostrare stabilmente un sito pubblico su una TV senza lasciare tastiera 
 | R25 | Diagnostica e configurazione CEC | P0 | Collaudo telecomando | Stato ed eventi CEC aggiornati entro 2 s; registro limitato e senza journal completo; ultimo tasto associabile alle azioni dalla dashboard; bridge riavviabile senza reboot |
 | R26 | Modalità Focus/Puntatore | P0 | Compatibilità siti | Il cambio dalla dashboard è immediato; in Puntatore le frecce muovono il mouse e OK fa clic tramite uinput |
 | R27 | Scorciatoie tasti colorati | P1 | Uso rapido dalla TV | Rosso, verde, giallo e blu sono associabili a Home, sito, ricarica, indietro o nessuna azione senza comandi arbitrari |
+| R28 | Diagnostica interna Brave dalla LAN | P1 | Collaudo accelerazione | Dashboard apre sul monitor GPU, Media Internals e Version in una nuova scheda; URL kiosk invariato; destinazioni interne limitate da allowlist |
 
 ## 8. User Experience and Flows
 
@@ -122,6 +123,7 @@ Occorre mostrare stabilmente un sito pubblico su una TV senza lasciare tastiera 
 **Dashboard / report**
 
 - Solo stato corrente e ultimo esito delle operazioni. Nessuna telemetria esterna.
+- Report interni del browser aperti solo su richiesta e soltanto sul display kiosk.
 - File persistenti: `config.json`, `secrets.json`, `state.json`, `update-status.json`.
 
 ## 10. Dependencies and Integrations

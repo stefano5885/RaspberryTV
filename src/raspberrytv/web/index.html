@@ -122,7 +122,39 @@
       </article>
     </section>
 
-    <section class="panel cec-module" data-module="05">
+    <section class="panel diagnostics-module" data-module="05">
+      <header>
+        <div><span class="section-label">BROWSER INTERNALS</span><h2>Test Brave sul monitor</h2></div>
+        <span class="module-state">LOCAL DISPLAY</span>
+      </header>
+      <p class="diagnostics-lead">Apre una nuova scheda tecnica direttamente nel browser kiosk. L’URL permanente del sito non viene modificato.</p>
+      <div class="diagnostics-grid">
+        <article>
+          <span class="diagnostic-index">T.01</span>
+          <strong>Pipeline GPU</strong>
+          <p>Controlla Compositing, Rasterization, WebGL e Video Decode.</p>
+          <button class="button button-primary" data-action="browser-gpu">APRI GPU REPORT</button>
+        </article>
+        <article>
+          <span class="diagnostic-index">T.02</span>
+          <strong>Pipeline media</strong>
+          <p>Avvialo mentre il sito riproduce un video e verifica il decoder effettivo.</p>
+          <button class="button" data-action="browser-media">APRI MEDIA INTERNALS</button>
+        </article>
+        <article>
+          <span class="diagnostic-index">T.03</span>
+          <strong>Build browser</strong>
+          <p>Mostra versione Brave/Chromium, sistema operativo e riga di comando.</p>
+          <button class="button button-ghost" data-action="browser-version">APRI VERSION INFO</button>
+        </article>
+      </div>
+      <div class="diagnostics-return">
+        <span>ESCAPE ROUTE // chiude le schede diagnostiche riavviando il kiosk sulla destinazione configurata.</span>
+        <button class="button button-ghost" data-action="open-site">← TORNA AL SITO</button>
+      </div>
+    </section>
+
+    <section class="panel cec-module" data-module="06">
       <header class="cec-header">
         <div><span class="section-label">HDMI INPUT BUS</span><h2>Telecomando CEC</h2></div>
         <div class="cec-live"><i></i><span id="cec-live-state">IN ATTESA</span></div>
@@ -228,7 +260,7 @@
       </div>
     </section>
 
-    <section class="panel footer-panel" data-module="06">
+    <section class="panel footer-panel" data-module="07">
       <div><span class="section-label">NODE OPERATIONS</span><h2>Controllo sistema</h2></div>
       <div class="button-row">
         <button class="button button-ghost" data-action="refresh">↻ REFRESH TELEMETRIA</button>

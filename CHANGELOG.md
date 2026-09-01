@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.6.0 - 2026-09-01
+
+- Corretto il cambio Focus/Puntatore con configurazioni CEC provenienti dalle release precedenti.
+- Il cambio modalità salva soltanto la modalità e non riconverte inutilmente la mappatura dei tasti.
+- Nuovo modulo “Test Brave sul monitor” nella dashboard LAN.
+- Apertura controllata in una nuova scheda di `brave://gpu`, `brave://media-internals` e `brave://version`.
+- Supporto equivalente `chrome://` quando il kiosk usa Chromium come fallback.
+- Il sito e la riproduzione corrente restano aperti durante la diagnostica; “Torna al sito” ripristina il kiosk normale.
+- Le pagine interne non sono accettate come URL del kiosk e l'helper mantiene una allowlist stretta.
+
 ## 0.5.0 - 2026-09-01
 
 - Modalità telecomando selezionabile: Focus oppure Puntatore, con frecce come mouse e OK come clic.

@@ -171,3 +171,10 @@ class ConfigStore:
         config.update(cec_keymap=keymap, cec_input_mode=mode, cec_color_actions=color_actions)
         self.config_file.write(config)
         return keymap, mode, color_actions
+
+    def set_cec_mode(self, value: Any) -> str:
+        from .cec_keys import normalize_input_mode
+
+        mode = normalize_input_mode(value)
+        self.config_file.update(cec_input_mode=mode)
+        return mode

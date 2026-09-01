@@ -246,10 +246,14 @@ class Handler(BaseHTTPRequestHandler):
                 self.application.system.request_wifi(str(body.get("ssid", "")), str(body.get("password", "")))
                 self._json({"ok": True, "message": "Configurazione Wi-Fi applicata"})
             elif path == "/api/config/cec":
-                keymap, mode, color_actions = self.application.store.set_cec(
-                    body.get("keymap"), body.get("mode"), body.get("color_actions")
-                )
-                self._json({"ok": True, "keymap": keymap, "input_mode": mode, "color_actions": color_actions})
+                if "keymap" not in body and "color_actions" not in body:
+                    mode = self.application.store.set_cec_mode(body.get("mode"))
+                    self._json({"ok": True, "input_mode": mode})
+                else:
+                    keymap, mode, color_actions = self.application.store.set_cec(
+                        body.get("keymap"), body.get("mode"), body.get("color_actions")
+                    )
+                    self._json({"ok": True, "keymap": keymap, "input_mode": mode, "color_actions": color_actions})
             elif path == "/api/telegram/refresh":
                 self._json({"ok": True, **self.application.refresh_telegram()})
             elif path == "/api/browser/site":
@@ -258,6 +262,10 @@ class Handler(BaseHTTPRequestHandler):
             elif path == "/api/browser/admin":
                 self.application.system.set_browser_target("admin")
                 self._json({"ok": True})
+            elif path == "/api/browser/diagnostics":
+                test = str(body.get("test", ""))
+                self.application.system.open_browser_diagnostic(test)
+                self._json({"ok": True, "test": test, "message": "Diagnostica aperta sul monitor"})
             elif path == "/api/system/reboot":
                 self.application.system.reboot()
                 self._json({"ok": True})

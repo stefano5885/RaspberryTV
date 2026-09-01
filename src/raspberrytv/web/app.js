@@ -269,6 +269,18 @@ document.addEventListener("click", async (event) => {
   try {
     if (action === "refresh") await loadStatus();
     if (action === "open-site") await request("/api/browser/site", { method: "POST", body: "{}" });
+    if (action === "browser-gpu") {
+      await request("/api/browser/diagnostics", { method: "POST", body: JSON.stringify({ test: "gpu" }) });
+      toast("Report GPU aperto sul monitor");
+    }
+    if (action === "browser-media") {
+      await request("/api/browser/diagnostics", { method: "POST", body: JSON.stringify({ test: "media-internals" }) });
+      toast("Media Internals aperto sul monitor");
+    }
+    if (action === "browser-version") {
+      await request("/api/browser/diagnostics", { method: "POST", body: JSON.stringify({ test: "version" }) });
+      toast("Informazioni browser aperte sul monitor");
+    }
     if (action === "cec-restart") {
       await request("/api/cec/restart", { method: "POST", body: "{}" });
       toast("Bridge CEC riavviato");

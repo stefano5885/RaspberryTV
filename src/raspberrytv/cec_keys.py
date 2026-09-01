@@ -90,12 +90,12 @@ def _migrate_legacy_keymap(value: dict[str, Any]) -> dict[str, Any]:
         previous_keys = previous_keys.split(",")
     if isinstance(next_keys, list):
         normalized = [normalize_key(str(key)) for key in next_keys if normalize_key(str(key))]
-        migrated.setdefault("down", normalized[:1] or DEFAULT_CEC_KEYMAP["down"])
-        migrated.setdefault("right", normalized[1:] or DEFAULT_CEC_KEYMAP["right"])
+        migrated.setdefault("down", normalized[:1])
+        migrated.setdefault("right", normalized[1:])
     if isinstance(previous_keys, list):
         normalized = [normalize_key(str(key)) for key in previous_keys if normalize_key(str(key))]
-        migrated.setdefault("up", normalized[:1] or DEFAULT_CEC_KEYMAP["up"])
-        migrated.setdefault("left", normalized[1:] or DEFAULT_CEC_KEYMAP["left"])
+        migrated.setdefault("up", normalized[:1])
+        migrated.setdefault("left", normalized[1:])
     return migrated
 
 

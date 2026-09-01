@@ -30,6 +30,11 @@ class SystemController:
         JsonFile(self.state_dir / "state.json", {}).update(browser_target=target)
         self._invoke("browser-restart")
 
+    def open_browser_diagnostic(self, test: str) -> None:
+        if test not in {"gpu", "media-internals", "version"}:
+            raise ValueError("Test browser non valido")
+        self._invoke(f"browser-diagnostic-{test}")
+
     def request_wifi(self, ssid: str, password: str) -> None:
         ssid = ssid.strip()
         if not ssid or len(ssid) > 32 or "\x00" in ssid:

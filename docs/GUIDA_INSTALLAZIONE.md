@@ -122,6 +122,16 @@ Rosso, verde, giallo e blu possono essere configurati come scorciatoie per Dashb
 
 Il riquadro **Termica** mostra la temperatura e il throttling. “Attivo” richiede attenzione immediata a raffreddamento o alimentatore; “storico” indica che il problema si è verificato dall'accensione anche se ora non è presente.
 
+### Verificare l'accelerazione di Brave dalla dashboard
+
+Nel modulo **Test Brave sul monitor** sono disponibili tre comandi:
+
+1. **Apri GPU Report:** nella sezione “Graphics Feature Status” verificare se Compositing, Rasterization e WebGL risultano hardware accelerated.
+2. **Apri Media Internals:** avviare prima un video sul sito, quindi premere il comando dalla dashboard LAN. Nel player cercare `video_decoder`: `GpuVideoDecoder` indica decodifica hardware, `FFmpegVideoDecoder` decodifica software.
+3. **Apri Version Info:** mostra build Brave/Chromium, sistema e parametri di avvio realmente usati.
+
+I report si aprono in una nuova scheda sul monitor collegato al Raspberry. Il campo URL non viene cambiato. Premere **Torna al sito** per chiudere la diagnostica e riavviare il kiosk sulla destinazione configurata.
+
 Il repository degli aggiornamenti è già impostato su `https://github.com/stefano5885/RaspberryTV.git`.
 
 ## 7. Verificare l'installazione
