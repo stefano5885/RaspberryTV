@@ -113,6 +113,15 @@ Nella dashboard:
 
 La sezione **Telecomando CEC** mostra in tempo quasi reale ciò che il Raspberry riceve. Se un tasto compare come “non associato”, premere **Associa ultimo** accanto all'azione desiderata e poi **Salva mappatura**. Il pulsante **Riavvia bridge** consente di riprovare l'inizializzazione senza riavviare tutto il Raspberry.
 
+Nella stessa sezione si può scegliere:
+
+- **Focus:** le frecce passano tra link e pulsanti; è la modalità iniziale.
+- **Puntatore:** le frecce muovono il mouse e OK esegue un clic; è utile per siti non ottimizzati per tastiera.
+
+Rosso, verde, giallo e blu possono essere configurati come scorciatoie per Dashboard/Home, apertura del sito, ricarica, indietro o nessuna azione. Lo standard HDMI-CEC identifica F1 come blu, F2 rosso, F3 verde e F4 giallo; se il telecomando usa nomi diversi, premere il tasto fisico e usare **Associa ultimo** sulla riga del colore corretto.
+
+Il riquadro **Termica** mostra la temperatura e il throttling. “Attivo” richiede attenzione immediata a raffreddamento o alimentatore; “storico” indica che il problema si è verificato dall'accensione anche se ora non è presente.
+
 Il repository degli aggiornamenti è già impostato su `https://github.com/stefano5885/RaspberryTV.git`.
 
 ## 7. Verificare l'installazione
@@ -146,6 +155,8 @@ Il dispositivo installa soltanto tag stabili `vMAJOR.MINOR.PATCH`. Se il nuovo s
 - **Installazione interrotta:** rilanciare lo stesso comando; lo script è progettato per essere ripetibile.
 - **TV nera:** consultare [Troubleshooting](TROUBLESHOOTING.md) e i log del servizio kiosk.
 - **Telecomando non funziona:** aprire il pannello **Telecomando CEC**. Se non appare alcun tasto, verificare HDMI-CEC sulla TV e l'errore mostrato; se il tasto appare come non associato, mapparlo dalla stessa pagina.
+- **Frecce scomode sul sito:** provare la modalità **Puntatore**; la modifica viene applicata subito.
+- **Termica segnala sottotensione:** usare un alimentatore stabile e un cavo corto di buona qualità; il flag storico può restare visibile fino a un ciclo di alimentazione.
 - **La TV non riapre il kiosk:** controllare che l'avvio automatico dei dispositivi e il cambio sorgente siano consentiti nelle impostazioni CEC della TV; alcuni produttori espongono opzioni separate.
 
 ## 10. Sicurezza

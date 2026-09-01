@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.5.0 - 2026-09-01
+
+- Modalità telecomando selezionabile: Focus oppure Puntatore, con frecce come mouse e OK come clic.
+- Quattro tasti colorati/F1–F4 associabili dalla dashboard a Home, sito, ricarica, indietro o nessuna azione.
+- Mappatura CEC compatibile con la convenzione standard F1 blu, F2 rosso, F3 verde e F4 giallo, correggibile con “Associa ultimo”.
+- Nuova telemetria termica con temperatura SoC, stato throttling attuale, eventi storici e codice firmware.
+- Nessuna nuova dipendenza runtime; movimento e clic sono generati direttamente tramite `uinput`.
+
 ## 0.4.0 - 2026-09-01
 
 - Nuovo pannello HDMI-CEC con stato del bridge e registro strutturato aggiornato ogni secondo.

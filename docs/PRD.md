@@ -5,7 +5,7 @@
 - **Product / Feature Name:** RaspberryTV Kiosk
 - **Owner:** Project maintainer
 - **Status:** Approved for implementation
-- **Last Updated:** 2026-08-31
+- **Last Updated:** 2026-09-01
 
 ## 2. Summary
 
@@ -59,7 +59,8 @@ Occorre mostrare stabilmente un sito pubblico su una TV senza lasciare tastiera 
 **Key Use Cases**
 
 - Visualizzare automaticamente l'URL configurato a ogni boot.
-- Navigare link e controlli del sito con frecce, OK e Back.
+- Navigare il sito con focus oppure puntatore mouse tramite frecce, OK e Back.
+- Richiamare quattro funzioni base con i tasti colorati/F1–F4 configurabili.
 - Tornare alla dashboard locale e riaprire il kiosk.
 - Configurare URL, Wi-Fi e Telegram dalla LAN.
 - Recuperare l'ultimo URL Telegram valido con un pulsante.
@@ -87,7 +88,7 @@ Occorre mostrare stabilmente un sito pubblico su una TV senza lasciare tastiera 
 | R15 | Bootstrap pubblico da GitHub con un solo comando | P0 | Setup senza copia manuale | Su Pi 3 con OS 64-bit lo script installa e avvia i servizi senza tastiera locale |
 | R16 | Compatibilità con immagine OS completa | P0 | Disponibilità Raspberry Pi Imager | Il desktop preinstallato viene disabilitato e non compete con il kiosk su `:0` |
 | R17 | Schermata di attesa e apertura automatica | P0 | Uso senza browser LAN | Al boot appare lo stato di caricamento e il sito configurato si apre senza premere pulsanti |
-| R18 | Telemetria CPU e RAM | P1 | Diagnosi Pi 3 | Dashboard mostra CPU, temperatura, load, RAM usata e percentuale |
+| R18 | Telemetria CPU, RAM e termica | P1 | Diagnosi Pi 3 | Dashboard mostra CPU, temperatura, load, RAM e decodifica throttling attuale/storico |
 | R19 | Brave Shields Aggressive e nessun banner analytics | P0 | Esperienza kiosk/privacy | Profilo e policy impongono filtro aggressivo; P3A, stats ping, Web Discovery e Translate sono disabilitati |
 | R20 | Ciclo vita TV via HDMI-CEC | P0 | Uso automatico e durata pannello | Nessun blanking/DPMS a TV accesa; a TV spenta browser chiuso; alla riaccensione kiosk avviato e sorgente HDMI selezionata |
 | R21 | Feedback e sicurezza aggiornamenti | P0 | Operatività remota | Dashboard e TV mostrano manutenzione; file di stato restano leggibili dal servizio; un cambio release termina con reboot automatico |
@@ -95,6 +96,8 @@ Occorre mostrare stabilmente un sito pubblico su una TV senza lasciare tastiera 
 | R23 | Monitor senza CEC e splash boot | P1 | Compatibilità installazioni | Kiosk indipendente dal bridge CEC; solo splash RaspberryTV fullscreen, senza livelli grafici standard né messaggi systemd `[ OK ]`; checkout Git senza bit eseguibili tollerato |
 | R24 | Navigazione Brave non presidiata | P0 | Continuità kiosk | Nessun interstitial Domain Block richiede “Proceed”; documento principale consentito, tracker e pubblicità incorporati ancora bloccati in modalità Aggressive |
 | R25 | Diagnostica e configurazione CEC | P0 | Collaudo telecomando | Stato ed eventi CEC aggiornati entro 2 s; registro limitato e senza journal completo; ultimo tasto associabile alle azioni dalla dashboard; bridge riavviabile senza reboot |
+| R26 | Modalità Focus/Puntatore | P0 | Compatibilità siti | Il cambio dalla dashboard è immediato; in Puntatore le frecce muovono il mouse e OK fa clic tramite uinput |
+| R27 | Scorciatoie tasti colorati | P1 | Uso rapido dalla TV | Rosso, verde, giallo e blu sono associabili a Home, sito, ricarica, indietro o nessuna azione senza comandi arbitrari |
 
 ## 8. User Experience and Flows
 
@@ -126,7 +129,7 @@ Occorre mostrare stabilmente un sito pubblico su una TV senza lasciare tastiera 
 - Raspberry Pi OS 64-bit, Lite o completo, release stabile corrente compatibile col Pi 3; Xorg/Openbox minimi e sessione kiosk dedicata sono gestiti dal provisioning.
 - Python 3 standard library; `git`; `curl`; `NetworkManager/nmcli`; `systemd`.
 - Brave ufficiale ARM64. Chromium di Raspberry Pi OS è il fallback se Brave non supera il collaudo.
-- `cec-utils/libCEC` per eventi CEC; `ydotool`/uinput per input sintetico sotto Wayland, con `xdotool` fallback X11 se necessario.
+- `cec-utils/libCEC` per eventi CEC; `/dev/uinput` per tastiera e mouse sintetici, senza tool di automazione aggiuntivi.
 - Telegram Bot API via HTTPS `getUpdates`; nessun webhook.
 - Repository pubblico `https://github.com/stefano5885/RaspberryTV` per bootstrap e release applicative.
 

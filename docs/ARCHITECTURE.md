@@ -16,7 +16,7 @@ Browser TV/LAN ----------------HTTP :8080---------------+
 
 ### Applicazione web
 
-`raspberrytv-web.service` esegue un server HTTP multithread della standard library. Serve HTML/CSS/JavaScript statici e le API JSON, incluse telemetria CPU, temperatura, load e RAM letta da `/proc`. Configurazione e stato sono scritti atomicamente; il token Telegram vive in `secrets.json` e non viene mai restituito dalle API.
+`raspberrytv-web.service` esegue un server HTTP multithread della standard library. Serve HTML/CSS/JavaScript statici e le API JSON, incluse telemetria CPU, temperatura, load e RAM letta da `/proc` e `/sys`. `vcgencmd get_throttled` aggiunge il bitmask firmware, separando anomalie attive da quelle avvenute dopo l'accensione. Configurazione e stato sono scritti atomicamente; il token Telegram vive in `secrets.json` e non viene mai restituito dalle API.
 
 ### Kiosk
 
@@ -32,9 +32,9 @@ Il bootstrap installa, quando disponibile, `rpi-splash-screen-support` e configu
 
 Il profilo Brave viene riconfigurato prima di ogni avvio: adblock attivo, filtro cosmetico first-party in modalità `BLOCK` (Aggressive), P3A e usage ping disabilitati. Le policy amministrative impediscono la ricomparsa dei relativi banner. Il solo interstitial `BraveDomainBlock` è disattivato: il documento principale può caricarsi senza richiedere “Proceed”, mentre le richieste pubblicitarie e di tracciamento della pagina restano filtrate dagli Shields.
 
-### CEC e focus
+### CEC, focus e puntatore
 
-`raspberrytv-cec.service` legge `cec-client` con maschera log `31` e crea `/dev/uinput` una tastiera virtuale. Il livello DEBUG è necessario perché libCEC pubblica lì gli eventi decodificati `key pressed`; il traffico grezzo non viene esposto dalla dashboard:
+`raspberrytv-cec.service` legge `cec-client` con maschera log `31` e crea tramite `/dev/uinput` un dispositivo virtuale con tastiera e mouse relativo. Il livello DEBUG è necessario perché libCEC pubblica lì gli eventi decodificati `key pressed`; il traffico grezzo non viene esposto dalla dashboard:
 
 | Telecomando | Evento Linux | Effetto |
 |---|---|---|
@@ -43,10 +43,11 @@ Il profilo Brave viene riconfigurato prima di ogni avvio: adblock attivo, filtro
 | OK / Select | Enter | Attivazione |
 | Back / Return | Alt+Sinistra | Cronologia browser |
 | Home / Root menu | riavvio kiosk sulla dashboard | Amministrazione locale |
+| Rosso/Verde/Giallo/Blu | azione configurata | Home, sito, ricarica, indietro o nessuna |
 
-La scelta Tab/Shift+Tab è deliberata: funziona sugli elementi semanticamente focusabili anche nei siti esterni, dove non è possibile iniettare JavaScript. Il comportamento esatto di Home/Back dipende dai codici inviati dalla TV.
+In modalità Focus, Tab/Shift+Tab funziona sugli elementi semanticamente focusabili anche nei siti esterni. In modalità Puntatore, le quattro frecce producono spostamenti mouse relativi e OK un clic sinistro. Non viene iniettato JavaScript. La convenzione CEC assegna F1 al blu, F2 al rosso, F3 al verde e F4 al giallo; la dashboard consente di apprendere il nome effettivo trasmesso dalla TV.
 
-Il bridge mantiene in `/var/lib/raspberrytv/cec-diagnostics.json` un registro strutturato limitato agli ultimi 100 eventi. La dashboard interroga `/api/cec` ogni secondo e mostra stato, tasti ricevuti, azione applicata, transizioni di alimentazione ed errori. Non viene esposto l'intero journal di sistema. La mappatura salvata in `cec_keymap` associa più nomi CEC alle cinque azioni supportate ed è riletta dal bridge a ogni pressione, senza riavvio.
+Il bridge mantiene in `/var/lib/raspberrytv/cec-diagnostics.json` un registro strutturato limitato agli ultimi 100 eventi. La dashboard interroga `/api/cec` ogni secondo e mostra stato, tasti ricevuti, azione applicata, transizioni di alimentazione ed errori. Non viene esposto l'intero journal di sistema. `cec_keymap`, `cec_input_mode` e `cec_color_actions` sono riletti dal bridge a ogni pressione, senza riavvio.
 
 Lo stesso client CEC interroga ogni 15 secondi lo stato di alimentazione del televisore. In standby arresta `raspberrytv-kiosk.service`, chiudendo Brave e Xorg ma lasciando acceso il Raspberry e il listener CEC. Quando rileva la riaccensione, riavvia il kiosk e invia `Active Source` per selezionare l'ingresso HDMI del Raspberry. Il cambio sorgente avviene una sola volta per ogni transizione verso acceso.
 

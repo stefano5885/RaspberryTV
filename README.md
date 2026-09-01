@@ -10,11 +10,12 @@ Kiosk web minimale per Raspberry Pi 3 Model B, controllato dal telecomando TV vi
 - Ethernet di fallback e configurazione Wi-Fi tramite NetworkManager.
 - Brave ARM64 in kiosk; Chromium viene installato come fallback.
 - Brave Shields imposto su Aggressive; P3A, usage ping, Web Discovery e traduzione disabilitati via policy.
-- `libCEC` + tastiera virtuale `uinput` per controllare anche siti esterni.
+- `libCEC` + dispositivo virtuale `uinput`: modalità Focus oppure puntatore mouse anche sui siti esterni.
+- Tasti colorati/F1–F4 configurabili per Dashboard/Home, sito, ricarica e indietro.
 - Gestione energia HDMI-CEC: nessun standby video durante l'uso, browser chiuso a TV spenta e sorgente riattivata alla riaccensione.
 - Sessione grafica essenziale senza barra o icone, con wallpaper diagnostico visibile quando Brave non è avviato.
 - Splash iniziale RaspberryTV e funzionamento kiosk anche con monitor privi di HDMI-CEC.
-- Telemetria locale di CPU, temperatura e RAM.
+- Telemetria locale di CPU, temperatura, throttling firmware e RAM.
 - Schermata tecnica di avvio con apertura automatica del sito configurato.
 - Tag Git SemVer, release separate, attivazione con symlink e rollback.
 - `systemd` per avvio e recovery di web, kiosk, CEC e updater one-shot.

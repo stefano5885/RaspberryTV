@@ -31,6 +31,7 @@ Compilare su Raspberry Pi 3 Model B e sulla TV destinata all'uso.
 - [ ] Nessun banner P3A/lingua compare nella parte alta di Brave.
 - [ ] Shields mostra “Sistemi di tracciamento e annunci” su Aggressive.
 - [ ] Dashboard mostra valori plausibili di CPU, temperatura e RAM.
+- [ ] Il riquadro Termica mostra `0x0` in condizioni normali e distingue throttling attivo da storico.
 - [ ] Se Brave fallisce, Chromium fallback mantiene le funzioni.
 - [ ] Il sito reale carica e resta fluido per almeno 4 ore.
 - [ ] Crash forzato del browser viene recuperato da systemd.
@@ -49,6 +50,9 @@ Compilare su Raspberry Pi 3 Model B e sulla TV destinata all'uso.
 - [ ] OK attiva link e pulsanti.
 - [ ] Back torna alla pagina precedente.
 - [ ] Home/Root menu torna alla dashboard.
+- [ ] In modalità Puntatore le frecce muovono il mouse nelle quattro direzioni e OK esegue il clic.
+- [ ] Tornando a Focus, le frecce riprendono la navigazione Tab/Shift+Tab senza riavvio.
+- [ ] Rosso, verde, giallo e blu eseguono le quattro azioni configurate; eventuali nomi F1–F4 specifici vengono appresi dalla dashboard.
 - [ ] Comportamento verificato dopo spegnimento/riaccensione TV.
 - [ ] Eventuali codici specifici della TV sono documentati.
 - [ ] Dashboard CEC passa a “In ascolto” e mostra ogni tasto entro due secondi.

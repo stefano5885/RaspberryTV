@@ -49,6 +49,14 @@ class DeploymentTests(unittest.TestCase):
         self.assertIn('data-cec-assign="activate"', html)
         self.assertIn('setInterval(() => loadCec().catch(() => {}), 1000)', javascript)
 
+    def test_dashboard_exposes_pointer_colours_and_throttling(self):
+        html = (ROOT / "src" / "raspberrytv" / "web" / "index.html").read_text(encoding="utf-8")
+        javascript = (ROOT / "src" / "raspberrytv" / "web" / "app.js").read_text(encoding="utf-8")
+        self.assertIn('value="pointer"', html)
+        self.assertIn('data-cec-map="color_red"', html)
+        self.assertIn('id="throttling-detail"', html)
+        self.assertIn("throttling.flags", javascript)
+
 
 if __name__ == "__main__":
     unittest.main()

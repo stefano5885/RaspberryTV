@@ -78,6 +78,12 @@ class ApiTests(unittest.TestCase):
         status, saved = self.call("/api/config/cec", "POST", {"keymap": keymap})
         self.assertEqual(status, 200)
         self.assertEqual(saved["keymap"]["activate"], ["ok button"])
+        status, saved = self.call("/api/config/cec", "POST", {
+            "mode": "pointer", "color_actions": {"red": "admin", "green": "site", "yellow": "reload", "blue": "back"}
+        })
+        self.assertEqual(status, 200)
+        self.assertEqual(saved["input_mode"], "pointer")
+        self.assertEqual(saved["color_actions"]["yellow"], "reload")
         self.call("/api/cec/clear", "POST")
         _, cleared = self.call("/api/cec")
         self.assertEqual(cleared["events"], [])

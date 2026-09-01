@@ -10,7 +10,7 @@ import threading
 import time
 
 from .cec_diagnostics import CecDiagnostics
-from .cec_keys import action_for_key, normalize_key, normalize_keymap
+from .cec_keys import normalize_color_actions, normalize_input_mode, normalize_key, normalize_keymap, operation_for_key
 from .config import ConfigStore
 from .cec_power import TvPowerController, parse_tv_power
 
@@ -19,28 +19,39 @@ LOGGER = logging.getLogger("raspberrytv.cec")
 
 EV_SYN = 0
 EV_KEY = 1
+EV_REL = 2
 SYN_REPORT = 0
 BUS_USB = 0x03
 UI_SET_EVBIT = 0x40045564
 UI_SET_KEYBIT = 0x40045565
+UI_SET_RELBIT = 0x40045566
 UI_DEV_CREATE = 0x5501
 UI_DEV_DESTROY = 0x5502
 
 KEY_TAB = 15
 KEY_ENTER = 28
+KEY_R = 19
+KEY_LEFTCTRL = 29
 KEY_LEFTSHIFT = 42
 KEY_LEFTALT = 56
 KEY_LEFT = 105
 KEY_ESC = 1
+BTN_LEFT = 272
+REL_X = 0
+REL_Y = 1
+POINTER_STEP = 48
 
 KEY_LINE = re.compile(r"key pressed:\s*([^\(]+)", re.IGNORECASE)
 
 
-class VirtualKeyboard:
+class VirtualRemote:
     def __init__(self, device: str = "/dev/uinput"):
         self.handle = os.open(device, os.O_WRONLY | os.O_NONBLOCK)
         fcntl.ioctl(self.handle, UI_SET_EVBIT, EV_KEY)
-        for code in {KEY_TAB, KEY_ENTER, KEY_LEFTSHIFT, KEY_LEFTALT, KEY_LEFT, KEY_ESC}:
+        fcntl.ioctl(self.handle, UI_SET_EVBIT, EV_REL)
+        fcntl.ioctl(self.handle, UI_SET_RELBIT, REL_X)
+        fcntl.ioctl(self.handle, UI_SET_RELBIT, REL_Y)
+        for code in {KEY_TAB, KEY_ENTER, KEY_R, KEY_LEFTCTRL, KEY_LEFTSHIFT, KEY_LEFTALT, KEY_LEFT, KEY_ESC, BTN_LEFT}:
             fcntl.ioctl(self.handle, UI_SET_KEYBIT, code)
         name = b"RaspberryTV CEC Remote"
         descriptor = struct.pack(
@@ -64,7 +75,7 @@ class VirtualKeyboard:
             os.close(self.handle)
 
     def _event(self, event_type: int, code: int, value: int) -> None:
-        os.write(self.handle, struct.pack("llHHI", 0, 0, event_type, code, value))
+        os.write(self.handle, struct.pack("llHHi", 0, 0, event_type, code, value))
 
     def chord(self, *codes: int) -> None:
         for code in codes:
@@ -73,29 +84,57 @@ class VirtualKeyboard:
             self._event(EV_KEY, code, 0)
         self._event(EV_SYN, SYN_REPORT, 0)
 
+    def move(self, x: int, y: int) -> None:
+        if x:
+            self._event(EV_REL, REL_X, x)
+        if y:
+            self._event(EV_REL, REL_Y, y)
+        self._event(EV_SYN, SYN_REPORT, 0)
+
+    def click(self) -> None:
+        self.chord(BTN_LEFT)
+
 
 def dispatch(
-    keyboard: VirtualKeyboard,
+    remote: VirtualRemote,
     key: str,
     keymap: dict[str, list[str]],
+    input_mode: str = "focus",
+    color_actions: dict[str, str] | None = None,
     helper: str = "/usr/local/sbin/raspberrytv-control",
 ) -> str | None:
-    action = action_for_key(key, keymap)
-    if action == "focus_next":
-        keyboard.chord(KEY_TAB)
-    elif action == "focus_previous":
-        keyboard.chord(KEY_LEFTSHIFT, KEY_TAB)
-    elif action == "activate":
-        keyboard.chord(KEY_ENTER)
-    elif action == "back":
-        keyboard.chord(KEY_LEFTALT, KEY_LEFT)
-    elif action == "admin":
+    executed = operation_for_key(key, keymap, input_mode)
+    if executed and executed.startswith("color_"):
+        executed = normalize_color_actions(color_actions).get(executed.removeprefix("color_"), "none")
+    if executed == "focus_next":
+        remote.chord(KEY_TAB)
+    elif executed == "focus_previous":
+        remote.chord(KEY_LEFTSHIFT, KEY_TAB)
+    elif executed == "pointer_up":
+        remote.move(0, -POINTER_STEP)
+    elif executed == "pointer_down":
+        remote.move(0, POINTER_STEP)
+    elif executed == "pointer_left":
+        remote.move(-POINTER_STEP, 0)
+    elif executed == "pointer_right":
+        remote.move(POINTER_STEP, 0)
+    elif executed == "pointer_click":
+        remote.click()
+    elif executed == "activate":
+        remote.chord(KEY_ENTER)
+    elif executed == "back":
+        remote.chord(KEY_LEFTALT, KEY_LEFT)
+    elif executed == "admin":
         subprocess.run([helper, "browser-admin"], timeout=10, check=False)
-    return action
+    elif executed == "site":
+        subprocess.run([helper, "browser-site"], timeout=10, check=False)
+    elif executed == "reload":
+        remote.chord(KEY_LEFTCTRL, KEY_R)
+    return executed
 
 
 def run_client(
-    keyboard: VirtualKeyboard,
+    remote: VirtualRemote,
     store: ConfigStore,
     diagnostics: CecDiagnostics,
     helper: str = "/usr/local/sbin/raspberrytv-control",
@@ -159,8 +198,11 @@ def run_client(
         if match:
             key = normalize_key(match.group(1))
             LOGGER.info("Tasto CEC: %s", key)
-            keymap = normalize_keymap(store.config_file.read().get("cec_keymap"))
-            action = dispatch(keyboard, key, keymap)
+            config = store.config_file.read()
+            keymap = normalize_keymap(config.get("cec_keymap"))
+            input_mode = normalize_input_mode(config.get("cec_input_mode"))
+            color_actions = normalize_color_actions(config.get("cec_color_actions"))
+            action = dispatch(remote, key, keymap, input_mode, color_actions)
             diagnostics.record(
                 "key",
                 f"Tasto “{key}” → {action or 'non associato'}",
@@ -179,18 +221,18 @@ def main() -> None:
     store = ConfigStore()
     diagnostics = CecDiagnostics(store.state_dir)
     while True:
-        keyboard: VirtualKeyboard | None = None
+        remote: VirtualRemote | None = None
         try:
-            diagnostics.record("bridge", "Inizializzazione tastiera virtuale e adattatore CEC", status="starting")
-            keyboard = VirtualKeyboard()
-            run_client(keyboard, store, diagnostics)
+            diagnostics.record("bridge", "Inizializzazione telecomando virtuale e adattatore CEC", status="starting")
+            remote = VirtualRemote()
+            run_client(remote, store, diagnostics)
         except Exception as exc:
             LOGGER.warning("CEC non disponibile: %s; nuovo tentativo tra 5 secondi", exc)
             diagnostics.record("error", f"CEC non disponibile: {exc}; nuovo tentativo tra 5 secondi", status="retrying", level="error")
             time.sleep(5)
         finally:
-            if keyboard is not None:
-                keyboard.close()
+            if remote is not None:
+                remote.close()
 
 
 if __name__ == "__main__":

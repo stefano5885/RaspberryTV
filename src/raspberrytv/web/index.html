@@ -49,6 +49,11 @@
         <strong id="ram">—</strong><span class="gauge"><i id="ram-gauge"></i></span>
         <small id="ram-detail">— / —</small>
       </article>
+      <article class="telemetry-card gauge-card" id="thermal-card">
+        <span class="telemetry-code">SYS.03</span><span class="telemetry-label">Termica</span>
+        <strong id="temperature">—</strong><span class="gauge"><i id="thermal-gauge"></i></span>
+        <small id="throttling-detail">THROTTLING —</small>
+      </article>
       <article class="telemetry-card">
         <span class="telemetry-code">EXT.01</span><span class="telemetry-label">Telegram</span>
         <strong id="telegram">—</strong><i class="signal"></i>
@@ -141,13 +146,32 @@
             <span class="section-label">KEY MAP</span>
             <p>Premi un tasto sul telecomando, poi usa <b>ASSOCIA ULTIMO</b>. Puoi indicare più nomi separati da virgole.</p>
           </div>
+          <fieldset class="cec-mode-switch">
+            <legend>MODALITÀ DI CONTROLLO</legend>
+            <label>
+              <input type="radio" name="cec-mode" value="focus" checked>
+              <span><b>FOCUS</b><small>Frecce tra link e pulsanti · OK apre</small></span>
+            </label>
+            <label>
+              <input type="radio" name="cec-mode" value="pointer">
+              <span><b>PUNTATORE</b><small>Frecce muovono il mouse · OK fa clic</small></span>
+            </label>
+          </fieldset>
           <div class="mapping-row">
-            <label for="cec-focus-next">AVANTI / DESTRA / GIÙ</label>
-            <div class="input-action"><input id="cec-focus-next" data-cec-map="focus_next"><button class="button" type="button" data-cec-assign="focus_next">ASSOCIA ULTIMO</button></div>
+            <label for="cec-up">FRECCIA SU</label>
+            <div class="input-action"><input id="cec-up" data-cec-map="up"><button class="button" type="button" data-cec-assign="up">ASSOCIA ULTIMO</button></div>
           </div>
           <div class="mapping-row">
-            <label for="cec-focus-previous">INDIETRO / SINISTRA / SU</label>
-            <div class="input-action"><input id="cec-focus-previous" data-cec-map="focus_previous"><button class="button" type="button" data-cec-assign="focus_previous">ASSOCIA ULTIMO</button></div>
+            <label for="cec-down">FRECCIA GIÙ</label>
+            <div class="input-action"><input id="cec-down" data-cec-map="down"><button class="button" type="button" data-cec-assign="down">ASSOCIA ULTIMO</button></div>
+          </div>
+          <div class="mapping-row">
+            <label for="cec-left">FRECCIA SINISTRA</label>
+            <div class="input-action"><input id="cec-left" data-cec-map="left"><button class="button" type="button" data-cec-assign="left">ASSOCIA ULTIMO</button></div>
+          </div>
+          <div class="mapping-row">
+            <label for="cec-right">FRECCIA DESTRA</label>
+            <div class="input-action"><input id="cec-right" data-cec-map="right"><button class="button" type="button" data-cec-assign="right">ASSOCIA ULTIMO</button></div>
           </div>
           <div class="mapping-row">
             <label for="cec-activate">OK / SELEZIONA</label>
@@ -160,6 +184,44 @@
           <div class="mapping-row">
             <label for="cec-admin">APRI DASHBOARD</label>
             <div class="input-action"><input id="cec-admin" data-cec-map="admin"><button class="button" type="button" data-cec-assign="admin">ASSOCIA ULTIMO</button></div>
+          </div>
+          <div class="color-shortcuts">
+            <div class="mapping-intro">
+              <span class="section-label">TASTI COLORATI // SCORCIATOIE</span>
+              <p>Funzioni sicure per F1–F4. Lo standard CEC usa F1 blu, F2 rosso, F3 verde e F4 giallo; puoi comunque associare il segnale realmente ricevuto.</p>
+            </div>
+            <div class="color-row red">
+              <label for="cec-color-red"><i></i>ROSSO · F2</label>
+              <input id="cec-color-red" data-cec-map="color_red">
+              <select data-cec-color-action="red" aria-label="Funzione tasto rosso">
+                <option value="admin">Dashboard / Home</option><option value="site">Apri sito</option><option value="reload">Ricarica pagina</option><option value="back">Indietro</option><option value="none">Nessuna</option>
+              </select>
+              <button class="button" type="button" data-cec-assign="color_red">ASSOCIA ULTIMO</button>
+            </div>
+            <div class="color-row green">
+              <label for="cec-color-green"><i></i>VERDE · F3</label>
+              <input id="cec-color-green" data-cec-map="color_green">
+              <select data-cec-color-action="green" aria-label="Funzione tasto verde">
+                <option value="site">Apri sito</option><option value="admin">Dashboard / Home</option><option value="reload">Ricarica pagina</option><option value="back">Indietro</option><option value="none">Nessuna</option>
+              </select>
+              <button class="button" type="button" data-cec-assign="color_green">ASSOCIA ULTIMO</button>
+            </div>
+            <div class="color-row yellow">
+              <label for="cec-color-yellow"><i></i>GIALLO · F4</label>
+              <input id="cec-color-yellow" data-cec-map="color_yellow">
+              <select data-cec-color-action="yellow" aria-label="Funzione tasto giallo">
+                <option value="reload">Ricarica pagina</option><option value="admin">Dashboard / Home</option><option value="site">Apri sito</option><option value="back">Indietro</option><option value="none">Nessuna</option>
+              </select>
+              <button class="button" type="button" data-cec-assign="color_yellow">ASSOCIA ULTIMO</button>
+            </div>
+            <div class="color-row blue">
+              <label for="cec-color-blue"><i></i>BLU · F1</label>
+              <input id="cec-color-blue" data-cec-map="color_blue">
+              <select data-cec-color-action="blue" aria-label="Funzione tasto blu">
+                <option value="back">Indietro</option><option value="admin">Dashboard / Home</option><option value="site">Apri sito</option><option value="reload">Ricarica pagina</option><option value="none">Nessuna</option>
+              </select>
+              <button class="button" type="button" data-cec-assign="color_blue">ASSOCIA ULTIMO</button>
+            </div>
           </div>
           <button class="button button-primary" type="submit">SALVA MAPPATURA</button>
         </form>

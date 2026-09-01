@@ -12,6 +12,17 @@ const cecStatusLabels = {
   retrying: "NUOVO TENTATIVO",
 };
 
+const throttleLabels = {
+  under_voltage: "SOTTOTENSIONE",
+  frequency_capped: "FREQ. LIMITATA",
+  throttled: "THROTTLING",
+  soft_temperature_limit: "LIMITE TERMICO",
+  under_voltage_occurred: "SOTTOTENSIONE STORICA",
+  frequency_capped_occurred: "FREQ. LIMITATA STORICA",
+  throttled_occurred: "THROTTLING STORICO",
+  soft_temperature_limit_occurred: "LIMITE TERMICO STORICO",
+};
+
 function toast(message, error = false) {
   const node = $("#toast");
   node.textContent = message;
@@ -104,6 +115,12 @@ async function loadCec() {
       const input = document.querySelector(`[data-cec-map="${action}"]`);
       if (input) input.value = (keys || []).join(", ");
     }
+    const mode = document.querySelector(`input[name="cec-mode"][value="${data.input_mode || "focus"}"]`);
+    if (mode) mode.checked = true;
+    for (const [color, action] of Object.entries(data.color_actions || {})) {
+      const select = document.querySelector(`[data-cec-color-action="${color}"]`);
+      if (select) select.value = action;
+    }
     cecMappingLoaded = true;
   }
 }
@@ -150,6 +167,19 @@ async function loadStatus() {
   $("#ram").textContent = Number.isFinite(ram.percent) ? `${ram.percent.toFixed(1)}%` : "—";
   $("#ram-gauge").style.width = `${Number.isFinite(ram.percent) ? Math.min(100, Math.max(0, ram.percent)) : 0}%`;
   $("#ram-detail").textContent = `${bytes(ram.used_bytes)} / ${bytes(ram.total_bytes)}`;
+  const temperature = system.cpu_temperature_c == null ? Number.NaN : Number(system.cpu_temperature_c);
+  const throttling = system.throttling || {};
+  const activeFlags = Object.entries(throttling.flags || {}).filter(([name, active]) => active && !name.endsWith("_occurred")).map(([name]) => throttleLabels[name]);
+  const historicFlags = Object.entries(throttling.flags || {}).filter(([name, active]) => active && name.endsWith("_occurred")).map(([name]) => throttleLabels[name]);
+  $("#temperature").textContent = Number.isFinite(temperature) ? `${temperature.toFixed(1)}°C` : "—";
+  $("#thermal-gauge").style.width = `${Number.isFinite(temperature) ? Math.min(100, Math.max(0, temperature / 85 * 100)) : 0}%`;
+  $("#throttling-detail").textContent = !throttling.available
+    ? "THROTTLING N/D"
+    : activeFlags.length ? `${activeFlags.join(" · ")} · ${throttling.raw}`
+      : historicFlags.length ? `${historicFlags.join(" · ")} · ${throttling.raw}`
+        : `NESSUNA LIMITAZIONE · ${throttling.raw}`;
+  $("#thermal-card").classList.toggle("offline", Boolean(throttling.active));
+  $("#thermal-card").classList.toggle("warning", !throttling.active && Boolean(throttling.occurred));
   $("#chat-id").value = config.telegram_chat_id || "";
   $("#topic-id").value = config.telegram_topic_id || "";
   $("#repository-url").value = config.repository_url || "";
@@ -198,11 +228,26 @@ $("#cec-form").addEventListener("submit", async (event) => {
   for (const input of event.currentTarget.querySelectorAll("[data-cec-map]")) {
     keymap[input.dataset.cecMap] = input.value.split(",").map((value) => value.trim()).filter(Boolean);
   }
+  const mode = event.currentTarget.querySelector('input[name="cec-mode"]:checked')?.value || "focus";
+  const colorActions = {};
+  for (const select of event.currentTarget.querySelectorAll("[data-cec-color-action]")) {
+    colorActions[select.dataset.cecColorAction] = select.value;
+  }
   try {
-    await request("/api/config/cec", { method: "POST", body: JSON.stringify({ keymap }) });
-    toast("Mappatura telecomando salvata");
+    await request("/api/config/cec", { method: "POST", body: JSON.stringify({ keymap, mode, color_actions: colorActions }) });
+    toast("Modalità e mappatura telecomando salvate");
   } catch (error) { toast(error.message, true); }
 });
+
+for (const modeInput of document.querySelectorAll('input[name="cec-mode"]')) {
+  modeInput.addEventListener("change", async (event) => {
+    if (!event.currentTarget.checked) return;
+    try {
+      await request("/api/config/cec", { method: "POST", body: JSON.stringify({ mode: event.currentTarget.value }) });
+      toast(event.currentTarget.value === "pointer" ? "Modalità Puntatore attiva" : "Modalità Focus attiva");
+    } catch (error) { toast(error.message, true); }
+  });
+}
 
 document.addEventListener("click", async (event) => {
   const assignment = event.target.closest("[data-cec-assign]")?.dataset.cecAssign;

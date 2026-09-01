@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import os
+import re
+import subprocess
 import threading
 import time
 from pathlib import Path
@@ -69,6 +71,40 @@ def _uptime(path: Path = Path("/proc/uptime")) -> int | None:
         return None
 
 
+THROTTLE_FLAGS = {
+    "under_voltage": 0,
+    "frequency_capped": 1,
+    "throttled": 2,
+    "soft_temperature_limit": 3,
+    "under_voltage_occurred": 16,
+    "frequency_capped_occurred": 17,
+    "throttled_occurred": 18,
+    "soft_temperature_limit_occurred": 19,
+}
+
+
+def _throttling(command: str = "vcgencmd") -> dict:
+    unavailable = {"available": False, "raw": None, "active": False, "occurred": False, "flags": {}}
+    try:
+        result = subprocess.run(
+            [command, "get_throttled"], capture_output=True, text=True, timeout=2, check=False
+        )
+    except (OSError, subprocess.SubprocessError):
+        return unavailable
+    match = re.search(r"throttled=(0x[0-9a-f]+)", result.stdout, re.IGNORECASE)
+    if result.returncode or not match:
+        return unavailable
+    raw = int(match.group(1), 16)
+    flags = {name: bool(raw & (1 << bit)) for name, bit in THROTTLE_FLAGS.items()}
+    return {
+        "available": True,
+        "raw": f"0x{raw:x}",
+        "active": any(flags[name] for name in THROTTLE_FLAGS if not name.endswith("_occurred")),
+        "occurred": any(flags[name] for name in THROTTLE_FLAGS if name.endswith("_occurred")),
+        "flags": flags,
+    }
+
+
 class SystemMetrics:
     def __init__(self, cpu: CpuSampler | None = None):
         self.cpu = cpu or CpuSampler()
@@ -81,6 +117,7 @@ class SystemMetrics:
         return {
             "cpu_percent": self.cpu.percent(),
             "cpu_temperature_c": _temperature(),
+            "throttling": _throttling(),
             "load_1m": load,
             "ram": _memory(),
             "uptime_seconds": _uptime(),

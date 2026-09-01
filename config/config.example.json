@@ -1,5 +1,12 @@
 {
   "bind_host": "0.0.0.0",
+  "cec_color_actions": {
+    "blue": "back",
+    "green": "site",
+    "red": "admin",
+    "yellow": "reload"
+  },
+  "cec_input_mode": "focus",
   "port": 8080,
   "repository_url": "https://github.com/stefano5885/RaspberryTV.git",
   "telegram_chat_id": "",

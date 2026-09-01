@@ -19,6 +19,8 @@ DEFAULT_CONFIG: dict[str, Any] = {
     "telegram_topic_id": "",
     "telegram_poll_minutes": 0,
     "cec_keymap": {},
+    "cec_input_mode": "focus",
+    "cec_color_actions": {},
 }
 
 DEFAULT_STATE: dict[str, Any] = {
@@ -152,9 +154,20 @@ class ConfigStore:
             secrets["telegram_bot_token"] = token.strip()
             self.secrets_file.write(secrets)
 
-    def set_cec_keymap(self, value: Any) -> dict[str, list[str]]:
-        from .cec_keys import normalize_keymap
+    def set_cec(
+        self,
+        keymap_value: Any = None,
+        mode_value: Any = None,
+        color_actions_value: Any = None,
+    ) -> tuple[dict[str, list[str]], str, dict[str, str]]:
+        from .cec_keys import normalize_color_actions, normalize_input_mode, normalize_keymap
 
-        keymap = normalize_keymap(value)
-        self.config_file.update(cec_keymap=keymap)
-        return keymap
+        config = self.config_file.read()
+        keymap = normalize_keymap(config.get("cec_keymap") if keymap_value is None else keymap_value)
+        mode = normalize_input_mode(config.get("cec_input_mode") if mode_value is None else mode_value)
+        color_actions = normalize_color_actions(
+            config.get("cec_color_actions") if color_actions_value is None else color_actions_value
+        )
+        config.update(cec_keymap=keymap, cec_input_mode=mode, cec_color_actions=color_actions)
+        self.config_file.write(config)
+        return keymap, mode, color_actions

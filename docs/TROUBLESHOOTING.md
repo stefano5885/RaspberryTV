@@ -65,7 +65,22 @@ I log sono limitati da journald a 100 MB persistenti e 14 giorni.
 
 ## Le frecce non seguono la geometria della pagina
 
-Per compatibilità con siti arbitrari, Su/Sinistra producono Shift+Tab e Giù/Destra producono Tab. L'ordine dipende dal DOM del sito. Correggere `tabindex`, semantica di link/pulsanti e focus sul sito sorgente quando possibile.
+In modalità **Focus**, Su/Sinistra producono Shift+Tab e Giù/Destra producono Tab: l'ordine dipende dal DOM del sito. Se la pagina non è ben navigabile da tastiera, selezionare **Puntatore** nel pannello CEC; le frecce muoveranno il mouse e OK farà clic. La modifica è immediata.
+
+Se un tasto colorato non esegue l'azione prevista, premerlo e leggere **Ultimo segnale**. HDMI-CEC usa normalmente F1=blu, F2=rosso, F3=verde e F4=giallo, ma il produttore può inviare un nome diverso: usare **Associa ultimo** sulla riga del colore fisico e salvare.
+
+## Temperatura o throttling anomali
+
+- **Attivo ora:** controllare ventilazione e alimentatore. Sottotensione e temperatura possono ridurre immediatamente la frequenza.
+- **Storico:** l'anomalia si è verificata dopo l'accensione ma non è necessariamente presente adesso; il codice esadecimale resta mostrato per diagnosi.
+- **N/D:** `vcgencmd` non è disponibile. Su Raspberry Pi OS verificare `command -v vcgencmd`; la temperatura può comunque continuare a essere letta da `/sys`.
+
+Per confermare via SSH:
+
+```sh
+vcgencmd get_throttled
+cat /sys/class/thermal/thermal_zone0/temp
+```
 
 ## Telegram non trova messaggi
 

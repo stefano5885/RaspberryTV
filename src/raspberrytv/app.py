@@ -15,7 +15,7 @@ from urllib.parse import urlsplit
 from . import __version__
 from .config import ConfigStore
 from .cec_diagnostics import CecDiagnostics
-from .cec_keys import normalize_keymap
+from .cec_keys import normalize_color_actions, normalize_input_mode, normalize_keymap
 from .network import network_status
 from .system_control import SystemController
 from .system_metrics import SystemMetrics
@@ -191,6 +191,8 @@ class Handler(BaseHTTPRequestHandler):
                 diagnostics = self.application.cec.read()
                 config = self.application.store.config_file.read()
                 diagnostics["keymap"] = normalize_keymap(config.get("cec_keymap"))
+                diagnostics["input_mode"] = normalize_input_mode(config.get("cec_input_mode"))
+                diagnostics["color_actions"] = normalize_color_actions(config.get("cec_color_actions"))
                 self._json(diagnostics)
             elif path == "/api/kiosk-target":
                 if self.client_address[0] not in {"127.0.0.1", "::1"}:
@@ -244,8 +246,10 @@ class Handler(BaseHTTPRequestHandler):
                 self.application.system.request_wifi(str(body.get("ssid", "")), str(body.get("password", "")))
                 self._json({"ok": True, "message": "Configurazione Wi-Fi applicata"})
             elif path == "/api/config/cec":
-                keymap = self.application.store.set_cec_keymap(body.get("keymap"))
-                self._json({"ok": True, "keymap": keymap})
+                keymap, mode, color_actions = self.application.store.set_cec(
+                    body.get("keymap"), body.get("mode"), body.get("color_actions")
+                )
+                self._json({"ok": True, "keymap": keymap, "input_mode": mode, "color_actions": color_actions})
             elif path == "/api/telegram/refresh":
                 self._json({"ok": True, **self.application.refresh_telegram()})
             elif path == "/api/browser/site":
